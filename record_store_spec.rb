@@ -18,10 +18,16 @@ describe 'RecordStore' do
   end
 
   describe '#add' do
-    let(:record) { 'McPersonson, Person, F, red, 4/20/1990' }
+    let(:record_1) { 'McPersonson, Person, F, red, 4/20/1990' }
+    let(:record_2) { 'McPersonson | Person | F | red | 4/20/1990' }
 
     it 'should increase the number of records by 1' do
-      expect { record_store.add record }.to change { record_store.records.count }.by(1)
+      expect { record_store.add record_1 }.to change { record_store.records.count }.by(1)
+      expect(record_store.records.last.fields.any? {|field| field == nil}).to be(false)
+    end
+    it 'should be able to handle "|" delimitting' do
+      expect { record_store.add record_2 }.to change { record_store.records.count }.by(1)
+      expect(record_store.records.last.fields.any? {|field| field == nil}).to be(false)
     end
   end
 end
