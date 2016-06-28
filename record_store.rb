@@ -7,6 +7,8 @@ class RecordStore
     LastName, FirstName, Gender, FavoriteColor, DateOfBirth
   DOC
 
+  attr_accessor :records
+
   def initialize(fpath)
     @records = []
     CSV.foreach(fpath, :headers => true) do |csv|
