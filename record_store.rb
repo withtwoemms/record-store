@@ -19,6 +19,10 @@ class RecordStore
     table.each {|row| @records << row}
   end
 
+  def export
+    raise "NotImplemented"
+  end
+
   def add(record_str)
     new_row = CSV::Row.new( @headers, record_str.split(/,|\|/) )
     raise InvalidRecord if new_row.fields.any? {|field| field == nil || field == ''}

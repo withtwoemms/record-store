@@ -35,4 +35,16 @@ describe 'RecordStore' do
       expect { record_store.add record_4 }.to raise_error(InvalidRecord)
     end
   end
+
+  describe '#export' do
+    let(:record) { 'McPersonson, Person, F, red, 4/20/1990' }
+    
+    it 'should save @records to file' do
+      original_num_records = record_store.records.count
+      record_store.add record
+      
+      new_record_store = RecordStore.new records
+      expect { record_store.export }.to change { original_num_records }.by(new_record_store.records.count)
+    end
+  end
 end
