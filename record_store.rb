@@ -6,4 +6,7 @@ class RecordStore
     LastName | FirstName | Gender | FavoriteColor | DateOfBirth
     LastName, FirstName, Gender, FavoriteColor, DateOfBirth
   DOC
+
+  def initialize(fpath)
+  end
 end
