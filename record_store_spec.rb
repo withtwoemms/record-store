@@ -18,11 +18,10 @@ describe 'RecordStore' do
   end
 
   describe '#add' do
-    # LastName, FirstName, Gender, FavoriteColor, DateOfBirth
     let(:record) { 'McPersonson, Person, F, red, 4/20/1990' }
 
     it 'should increase the number of records by 1' do
-      expect(record_store.add record).to change { record_store.records.count }.by(1)
+      expect { record_store.add record }.to change { record_store.records.count }.by(1)
     end
   end
 end
