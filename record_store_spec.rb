@@ -1,11 +1,11 @@
 require_relative 'record_store'
 
 describe 'RecordStore' do
-  describe '#initialize' do
-    let(:records) { 'records.csv' }
-    let(:recordless) { 'recordless.csv' }
-    let(:record_store) { RecordStore.new(records) }
+  let(:records) { 'records.csv' }
+  let(:recordless) { 'recordless.csv' }
+  let(:record_store) { RecordStore.new(records) }
 
+  describe '#initialize' do
     it 'should create a RecordStore object' do
       expect(record_store.class).to be(RecordStore)
     end
