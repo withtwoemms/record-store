@@ -8,5 +8,13 @@ class RecordStore
   DOC
 
   def initialize(fpath)
+    @records = []
+    CSV.foreach(fpath, :headers => true) do |csv|
+      @records << csv
+    end
+
+    raise NoRecordsFound if @records.empty?
   end
 end
+
+class NoRecordsFound < StandardError; end 
