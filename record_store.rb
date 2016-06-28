@@ -17,6 +17,10 @@ class RecordStore
 
     raise NoRecordsFound if @records.empty?
   end
+
+  def add(record_str)
+    raise 'NotImplemented'
+  end
 end
 
 class NoRecordsFound < StandardError; end 
