@@ -20,14 +20,19 @@ describe 'RecordStore' do
   describe '#add' do
     let(:record_1) { 'McPersonson, Person, F, red, 4/20/1990' }
     let(:record_2) { 'McPersonson | Person | F | red | 4/20/1990' }
+    let(:record_3) { 'McPersonson, Person, F, red' } # invalid -- nil field
+    let(:record_4) { 'McPersonson, Person, F, red,' } # invalid -- '' field
 
     it 'should increase the number of records by 1' do
       expect { record_store.add record_1 }.to change { record_store.records.count }.by(1)
-      expect(record_store.records.last.fields.any? {|field| field == nil}).to be(false)
     end
     it 'should be able to handle "|" delimitting' do
       expect { record_store.add record_2 }.to change { record_store.records.count }.by(1)
-      expect(record_store.records.last.fields.any? {|field| field == nil}).to be(false)
+    end
+    it 'should throw an error if any field is invalid' do
+      # "invalid" fields are nil or ''
+      expect { record_store.add record_3 }.to raise_error(InvalidRecord)
+      expect { record_store.add record_4 }.to raise_error(InvalidRecord)
     end
   end
 end
