@@ -8,18 +8,19 @@ class RecordStore
   DOC
 
   attr_accessor :records
+  attr_reader   :headers
 
   def initialize(fpath)
+    table = CSV.read(fpath, :headers => true)
     @records = []
-    CSV.foreach(fpath, :headers => true) do |csv|
-      @records << csv
-    end
+    @headers = table.headers
+    raise NoRecordsFound if @headers.empty?
 
-    raise NoRecordsFound if @records.empty?
+    table.each {|row| @records << row}
   end
 
   def add(record_str)
-    raise 'NotImplemented'
+    @records << CSV::Row.new( @headers, record_str.split(',') )
   end
 end
 
