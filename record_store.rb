@@ -20,8 +20,9 @@ class RecordStore
   end
 
   def add(record_str)
-    @records << CSV::Row.new( @headers, record_str.split(',') )
+    @records << CSV::Row.new( @headers, record_str.split(/,|\|/) )
   end
 end
 
 class NoRecordsFound < StandardError; end 
+class InvalidRecord < StandardError; end
