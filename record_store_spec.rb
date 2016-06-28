@@ -42,9 +42,10 @@ describe 'RecordStore' do
     it 'should save @records to file' do
       original_num_records = record_store.records.count
       record_store.add record
+      record_store.export
       
       new_record_store = RecordStore.new records
-      expect { record_store.export }.to change { original_num_records }.by(new_record_store.records.count)
+      expect(new_record_store.records.count).to be > original_num_records
     end
   end
 end
