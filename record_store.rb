@@ -8,9 +8,10 @@ class RecordStore
   DOC
 
   attr_accessor :records
-  attr_reader   :headers
+  attr_reader   :headers, :inventory
 
   def initialize(fpath)
+    @inventory = fpath
     table = CSV.read(fpath, :headers => true)
     @records = []
     @headers = table.headers
@@ -20,7 +21,12 @@ class RecordStore
   end
 
   def export
-    raise "NotImplemented"
+    CSV.open(@inventory, 'w', :headers => true) do |csv|
+      csv << @headers
+      @records.each do |record|
+        csv << record
+      end
+    end
   end
 
   def add(record_str)
