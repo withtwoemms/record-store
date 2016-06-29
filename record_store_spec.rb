@@ -6,18 +6,15 @@ describe 'RecordStore' do
   let(:record) { 'McPersonson, Person, F, red, 4/20/1990' }
 
   describe '#initialize' do
+    let(:fake_genres) { 'These, Are, The, Fake, Headers' }
+
     after(:each) do
       File.delete('records.csv') if File.exist? 'records.csv'
     end
 
     it 'should throw a HeadersMismatch error if existing "inventory" file has unexpected headers' do
-      expect { RecordStore.new(inventory, record) }.to raise_error(HeadersMismatch)
-    end
-    it 'should throw a NoHeadersFound error if existing "inventory" has nil headers' do 
-      expect { RecordStore.new(inventory, nil) }.to raise_error(NoHeadersFound)
-    end
-    it 'should throw a NoHeadersFound error if existing "inventory" has empty headers' do 
-      expect { RecordStore.new(inventory, '') }.to raise_error(NoHeadersFound)
+      RecordStore.new(inventory, record)
+      expect { RecordStore.new(inventory, fake_genres) }.to raise_error(HeadersMismatch)
     end
   end
 
@@ -48,6 +45,10 @@ describe 'RecordStore' do
   describe '#export' do
     let(:record_store) { RecordStore.new(inventory, genres) }
     
+    after(:each) do
+      File.delete('records.csv') if File.exist? 'records.csv'
+    end
+
     it 'should save @records to file' do
       original_num_records = record_store.records.count
       record_store.add record
@@ -60,6 +61,10 @@ describe 'RecordStore' do
 
   describe '#clear' do
     let(:record_store) { RecordStore.new(inventory, genres) }
+
+    after(:each) do
+      File.delete('records.csv') if File.exist? 'records.csv'
+    end
 
     it 'should remove all records' do
       record_store.add record

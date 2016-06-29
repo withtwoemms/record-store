@@ -1,6 +1,4 @@
 require 'csv'
-require 'pathname'
-require 'FileUtils'
 
 class RecordStore
 
@@ -14,49 +12,39 @@ class RecordStore
   attr_reader   :headers, :inventory
 
   def initialize(fpath, headers_str)
-    raise NoHeadersFound unless headers_str
-    @headers = headers_str.split(/,|\|/) if headers_str
-    if Pathname.new(fpath).exist?
-      table = CSV.read(fpath)
-      p table
-      raise NoHeadersFound if table.first.empty? 
-      raise HeadersMismatch if table.first != @headers
-    else
-      FileUtils.touch(fpath)
-      table = CSV.open(fpath, 'wb', :headers => true) do |csv|
-        csv << @headers if headers_str
+    expected_headers = headers_str.split(/,\s|\s\|\s/)
+    @records = []
+    if File.exist? fpath
+      CSV.foreach(fpath) do |row|
+        @records << row.map(&:strip)
       end
-      p table
-      raise NoHeadersFound if table.headers.empty?
+      @headers = @records.shift
+      raise HeadersMismatch if @headers != expected_headers
+    else
+      @headers = expected_headers
+      CSV.open(fpath, 'w+') do |csv|
+        csv << @headers
+      end
     end
     @inventory = fpath
-    @records = []
-
-    table.each {|row| @records << row unless row.empty? or row == @headers}
-    puts
   end
 
   def export
-    CSV.open(@inventory, 'wb', :headers => true) do |csv|
-      csv << @headers
-      @records.each do |record|
-        csv << record
-      end
-    end
+    raise 'NotImplemented'
   end
 
   def add(record_str)
-    new_row = CSV::Row.new( @headers, record_str.split(/,|\|/) )
-    raise InvalidRecord if new_row.fields.any? {|field| field == nil || field == ''}
-
-    @records << new_row
+    raise 'NotImplemented'
   end
 
   def clear
-    @records = []
-    self.export
+    raise 'NotImplemented'
   end
 end
+
+#RecordStore.new 'records', 'LastName, FirstName, Gender, FavoriteColor, DateOfBirth' 
+#RecordStore.new 'records', 'LastName | FirstName | Gender | FavoriteColor | DateOfBirth' 
+#RecordStore.new 'no_records', 'LastName | FirstName | Gender | FavoriteColor | DateOfBirth' 
 
 class NoRecordsFound < StandardError; end 
 class HeadersMismatch < StandardError; end 
