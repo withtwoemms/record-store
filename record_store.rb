@@ -37,7 +37,8 @@ class RecordStore
   end
 
   def clear
-    raise "NotImplemented"
+    @records = []
+    self.export
   end
 end
 
