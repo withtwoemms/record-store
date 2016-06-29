@@ -48,4 +48,11 @@ describe 'RecordStore' do
       expect(new_record_store.records.count).to be > original_num_records
     end
   end
+
+  describe '#clear' do
+    it 'should remove all records' do
+      record_store.clear
+      expect { RecordStore.new records }.to raise_error(NoRecordsFound)
+    end
+  end
 end

@@ -35,6 +35,10 @@ class RecordStore
 
     @records << new_row
   end
+
+  def clear
+    raise "NotImplemented"
+  end
 end
 
 class NoRecordsFound < StandardError; end 
