@@ -1,27 +1,36 @@
 require_relative 'record_store'
 
 describe 'RecordStore' do
-  let(:records) { 'records.csv' }
-  let(:recordless) { 'recordless.csv' }
-  let(:record_store) { RecordStore.new(records) }
+  let(:inventory) { 'records.csv' }
+  let(:genres) { 'LastName, FirstName, Gender, FavoriteColor, DateOfBirth' }
+  let(:record) { 'McPersonson, Person, F, red, 4/20/1990' }
 
   describe '#initialize' do
-    it 'should create a RecordStore object' do
-      expect(record_store.class).to be(RecordStore)
+    after(:each) do
+      File.delete('records.csv') if File.exist? 'records.csv'
     end
-    it 'should throw a NoRecordsFound error if none present' do
-      expect { RecordStore.new(recordless) }.to raise_error(NoRecordsFound)
+
+    it 'should throw a HeadersMismatch error if existing "inventory" file has unexpected headers' do
+      expect { RecordStore.new(inventory, record) }.to raise_error(HeadersMismatch)
     end
-    it 'should have records if some found' do
-      expect(record_store.records).not_to be_empty
+    it 'should throw a NoHeadersFound error if existing "inventory" has nil headers' do 
+      expect { RecordStore.new(inventory, nil) }.to raise_error(NoHeadersFound)
+    end
+    it 'should throw a NoHeadersFound error if existing "inventory" has empty headers' do 
+      expect { RecordStore.new(inventory, '') }.to raise_error(NoHeadersFound)
     end
   end
 
   describe '#add' do
+    let(:record_store) { RecordStore.new(inventory, genres) }
     let(:record_1) { 'McPersonson, Person, F, red, 4/20/1990' }
     let(:record_2) { 'McPersonson | Person | F | red | 4/20/1990' }
     let(:record_3) { 'McPersonson, Person, F, red' } # invalid -- nil field
     let(:record_4) { 'McPersonson, Person, F, red,' } # invalid -- '' field
+
+    after(:all) do
+      File.delete('records.csv') if File.exist? 'records.csv'
+    end
 
     it 'should increase the number of records by 1' do
       expect { record_store.add record_1 }.to change { record_store.records.count }.by(1)
@@ -37,22 +46,28 @@ describe 'RecordStore' do
   end
 
   describe '#export' do
-    let(:record) { 'McPersonson, Person, F, red, 4/20/1990' }
+    let(:record_store) { RecordStore.new(inventory, genres) }
     
     it 'should save @records to file' do
       original_num_records = record_store.records.count
       record_store.add record
       record_store.export
       
-      new_record_store = RecordStore.new records
+      new_record_store = RecordStore.new inventory, genres
       expect(new_record_store.records.count).to be > original_num_records
     end
   end
 
   describe '#clear' do
+    let(:record_store) { RecordStore.new(inventory, genres) }
+
     it 'should remove all records' do
-      record_store.clear
-      expect { RecordStore.new records }.to raise_error(NoRecordsFound)
+      record_store.add record
+      p record_store
+      
+      expect { record_store.clear }.to change { record_store.records.count }.from(1).to(0)
+      File.delete(inventory)
     end
   end
+
 end

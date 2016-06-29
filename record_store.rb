@@ -1,5 +1,8 @@
+require 'csv'
+require 'pathname'
+require 'FileUtils'
+
 class RecordStore
-  require 'csv'
 
   <<-DOC
     Input Formats:
@@ -10,18 +13,31 @@ class RecordStore
   attr_accessor :records
   attr_reader   :headers, :inventory
 
-  def initialize(fpath)
+  def initialize(fpath, headers_str)
+    raise NoHeadersFound unless headers_str
+    @headers = headers_str.split(/,|\|/) if headers_str
+    if Pathname.new(fpath).exist?
+      table = CSV.read(fpath)
+      p table
+      raise NoHeadersFound if table.first.empty? 
+      raise HeadersMismatch if table.first != @headers
+    else
+      FileUtils.touch(fpath)
+      table = CSV.open(fpath, 'wb', :headers => true) do |csv|
+        csv << @headers if headers_str
+      end
+      p table
+      raise NoHeadersFound if table.headers.empty?
+    end
     @inventory = fpath
-    table = CSV.read(fpath, :headers => true)
     @records = []
-    @headers = table.headers
-    raise NoRecordsFound if @headers.empty?
 
-    table.each {|row| @records << row}
+    table.each {|row| @records << row unless row.empty? or row == @headers}
+    puts
   end
 
   def export
-    CSV.open(@inventory, 'w', :headers => true) do |csv|
+    CSV.open(@inventory, 'wb', :headers => true) do |csv|
       csv << @headers
       @records.each do |record|
         csv << record
@@ -43,4 +59,6 @@ class RecordStore
 end
 
 class NoRecordsFound < StandardError; end 
+class HeadersMismatch < StandardError; end 
+class NoHeadersFound < StandardError; end 
 class InvalidRecord < StandardError; end
