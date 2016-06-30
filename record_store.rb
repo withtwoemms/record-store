@@ -51,7 +51,7 @@ class RecordStore
     @records = []
   end
 
-  def sort
+  def sort(*headers, **options)
     raise 'NotImplemented'
   end
 end
