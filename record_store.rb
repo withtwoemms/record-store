@@ -34,17 +34,13 @@ class RecordStore
   end
 
   def add(record_str)
-    raise 'NotImplemented'
+    @records << record_str.split(/,\s|\s\|\s/)
   end
 
   def clear
     raise 'NotImplemented'
   end
 end
-
-#RecordStore.new 'records', 'LastName, FirstName, Gender, FavoriteColor, DateOfBirth' 
-#RecordStore.new 'records', 'LastName | FirstName | Gender | FavoriteColor | DateOfBirth' 
-#RecordStore.new 'no_records', 'LastName | FirstName | Gender | FavoriteColor | DateOfBirth' 
 
 class NoRecordsFound < StandardError; end 
 class HeadersMismatch < StandardError; end 
