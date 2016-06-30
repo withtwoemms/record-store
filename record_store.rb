@@ -30,7 +30,10 @@ class RecordStore
   end
 
   def export
-    raise 'NotImplemented'
+    CSV.open(@inventory, 'w+') do |csv|
+      csv << @headers
+      @records.each {|record| csv << record}
+    end
   end
 
   def add(record_str)
