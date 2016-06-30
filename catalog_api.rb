@@ -6,7 +6,7 @@ module Catalog
     format :json
 
     resource :records do
-      get ':genre' do
+      get 'example' do
         return {:example => "RECORDS OF THIS GENRE (#{params[:genre]}) WILL GO HERE"}
       end
     end
