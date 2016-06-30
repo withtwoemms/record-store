@@ -76,27 +76,26 @@ describe 'RecordStore' do
     let(:record_1) { 'McPersonson, Person, F, red, 4/20/1990' }
     let(:record_2) { 'McDoggerson | Dog | M | yellow | 4/20/2009' }
     let(:record_3) { 'McCatterson, Cat, F, blue, 4/20/2005' } 
+    let(:records) { [record_1, record_2, record_3] }
+    let(:frecords) { records.map {|record| RecordStore.format record} }
 
     before(:each) do
-      records = [record_1, record_2, record_3]
       records.each {|record| record_store.add record}
-      formatted_records = records.map {|record| RecordStore.format record}
     end
-
     after(:each) do
       File.delete('records.csv') if File.exist? 'records.csv'
     end
 
     it 'should sort by some field with respect to an order preference' do
       record_store.sort('BirthDate', :order => 'ASC')
-      expect { record_store.records }.to eq([formatted_records[0], formatted_records[2], formatted_records[1]])
+      expect(record_store.records).to eq([frecords[0], frecords[2], frecords[1]])
 
       record_store.sort('LastName', :order => 'DESC')
-      expect(record_store.records).to eq(formatted_records)
+      expect(record_store.records).to eq(frecords)
     end
     it 'should sort by multiple fields' do
       record_store.sort('Gender', 'LastName', :order => 'DESC')
-      expect { record_store.records }.to eq([formatted_records[0], formatted_records[2], formatted_records[1]])
+      expect(record_store.records).to eq([frecords[0], frecords[2], frecords[1]])
     end
   end
 
