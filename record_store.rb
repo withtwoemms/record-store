@@ -1,17 +1,20 @@
 require 'csv'
 
 class RecordStore
+  def self.format(record_str)
+    record_str.split(/,\s|\s\|\s/)
+  end
 
   <<-DOC
-    Input Formats:
+    Record Formats:
     LastName | FirstName | Gender | FavoriteColor | DateOfBirth
     LastName, FirstName, Gender, FavoriteColor, DateOfBirth
   DOC
 
   attr_reader   :headers, :inventory, :records
 
-  def initialize(fpath, headers_str, new_records=[])
-    expected_headers = headers_str.split(/,\s|\s\|\s/)
+  def initialize(fpath, headers_str, new_record_strs=[])
+    expected_headers = RecordStore.format headers_str
     @records = []
     if File.exist? fpath
       CSV.foreach(fpath) do |row|
@@ -27,7 +30,7 @@ class RecordStore
     end
     @inventory = fpath
 
-    new_records.each {|record| self.add record}
+    new_record_strs.each {|record| self.add record}
   end
 
   def export
