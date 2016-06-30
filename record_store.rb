@@ -30,7 +30,7 @@ class RecordStore
     end
     @inventory = fpath
 
-    new_record_strs.each {|record| self.add record}
+    new_record_strs.each {|record| self.add record} unless new_record_strs.empty?
   end
 
   def export
@@ -51,8 +51,15 @@ class RecordStore
     @records = []
   end
 
-  def sort(*headers, **options)
-    raise 'NotImplemented'
+  def sort(*header_terms, **options)
+    header_positions = header_terms.map {|term| @headers.index(term)}    
+    header_positions.each do |position|
+      snippets = [] 
+      @records.each_with_index {|record, i| snippets << [i, record[position]]}
+      snippets.sort_by! {|item| item.last}
+      snippets.map! {|item| @records[item.first].join(', ')}
+      return RecordStore.new(@inventory, @headers.join(', '), snippets)
+    end
   end
 end
 
