@@ -48,7 +48,5 @@ class RecordStore
   end
 end
 
-class NoRecordsFound < StandardError; end 
 class HeadersMismatch < StandardError; end 
-class NoHeadersFound < StandardError; end 
 class InvalidRecord < StandardError; end
