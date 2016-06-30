@@ -56,8 +56,14 @@ class RecordStore
     header_positions.each do |position|
       snippets = [] 
       @records.each_with_index {|record, i| snippets << [i, record[position]]}
-      snippets.sort_by! {|item| item.last}
+
+      if options[:order] == 'ASC' || options[:order] == nil
+        snippets.sort_by! {|item| item.last}
+      elsif options[:order] == 'DESC'
+        snippets.sort_by! {|item| item.last}.reverse!
+      end
       snippets.map! {|item| @records[item.first].join(', ')}
+
       return RecordStore.new(@inventory, @headers.join(', '), snippets)
     end
   end
