@@ -103,7 +103,7 @@ describe 'RecordStore' do
     end
     it 'should sort by multiple fields' do
       record_store.sort('Gender', 'LastName', :order => 'DESC')
-      expect(record_store.records).to match_array([frecords[0], frecords[2], frecords[1]])
+      expect(record_store.records).to match_array([frecords[0], frecords[2], frecords[3], frecords[1]])
     end
   end
 
