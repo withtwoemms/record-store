@@ -2,8 +2,6 @@
 use Rack::Reloader, 0
 use Rack::ContentLength
 
-app = proc do |env|
-  [ 200, {'Content-Type' => 'text/plain'}, ["Hello, world!"] ]
-end
+require File.expand_path('catalog_api', File.dirname(__FILE__))
 
-run app
+run Catalog::API
