@@ -44,7 +44,7 @@ class RecordStore
   end
 
   def clear
-    raise 'NotImplemented'
+    @records = []
   end
 end
 
