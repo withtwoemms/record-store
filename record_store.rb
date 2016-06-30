@@ -8,10 +8,9 @@ class RecordStore
     LastName, FirstName, Gender, FavoriteColor, DateOfBirth
   DOC
 
-  attr_accessor :records
-  attr_reader   :headers, :inventory
+  attr_reader   :headers, :inventory, :records
 
-  def initialize(fpath, headers_str)
+  def initialize(fpath, headers_str, new_records=[])
     expected_headers = headers_str.split(/,\s|\s\|\s/)
     @records = []
     if File.exist? fpath
@@ -27,6 +26,8 @@ class RecordStore
       end
     end
     @inventory = fpath
+
+    new_records.each {|record| self.add record}
   end
 
   def export
@@ -45,6 +46,10 @@ class RecordStore
 
   def clear
     @records = []
+  end
+
+  def sort
+    raise 'NotImplemented'
   end
 end
 
