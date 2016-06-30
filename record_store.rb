@@ -34,7 +34,10 @@ class RecordStore
   end
 
   def add(record_str)
-    @records << record_str.split(/,\s|\s\|\s/)
+    new_record = record_str.split(/,\s|\s\|\s/)
+    raise InvalidRecord if new_record.length != @headers.length
+
+    @records << new_record
   end
 
   def clear

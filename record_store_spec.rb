@@ -22,8 +22,7 @@ describe 'RecordStore' do
     let(:record_store) { RecordStore.new(inventory, genres) }
     let(:record_1) { 'McPersonson, Person, F, red, 4/20/1990' }
     let(:record_2) { 'McPersonson | Person | F | red | 4/20/1990' }
-    let(:record_3) { 'McPersonson, Person, F, red' } # invalid -- nil field
-    let(:record_4) { 'McPersonson, Person, F, red,' } # invalid -- '' field
+    let(:record_3) { 'McPersonson, Person, F, red' } 
 
     after(:all) do
       File.delete('records.csv') if File.exist? 'records.csv'
@@ -36,9 +35,7 @@ describe 'RecordStore' do
       expect { record_store.add record_2 }.to change { record_store.records.count }.by(1)
     end
     it 'should throw an error if any field is invalid' do
-      # "invalid" fields are nil or ''
       expect { record_store.add record_3 }.to raise_error(InvalidRecord)
-      expect { record_store.add record_4 }.to raise_error(InvalidRecord)
     end
   end
 
@@ -68,7 +65,6 @@ describe 'RecordStore' do
 
     it 'should remove all records' do
       record_store.add record
-      p record_store
       
       expect { record_store.clear }.to change { record_store.records.count }.from(1).to(0)
       File.delete(inventory)
