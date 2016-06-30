@@ -7,7 +7,7 @@ module Catalog
 
     resource :records do
       get ':genre' do
-        return "RECORDS OF THIS GENRE (#{params[:genre]}) WILL GO HERE"
+        return {:example => "RECORDS OF THIS GENRE (#{params[:genre]}) WILL GO HERE"}
       end
     end
   end
