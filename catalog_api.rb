@@ -2,5 +2,13 @@ require 'grape'
 
 module Catalog
   class API < Grape::API
+    version 'v1', using: :header, vendor: 'Funkytown'
+    format :json
+
+    resource :records do
+      get ':genre' do
+        return "RECORDS OF THIS GENRE (#{params[:genre]}) WILL GO HERE"
+      end
+    end
   end
 end
