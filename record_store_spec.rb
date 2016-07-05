@@ -61,7 +61,7 @@ describe 'RecordStore' do
     end
   end
 
-  describe '#clear' do
+  describe '#clear_buffer' do
     let(:record_store) { RecordStore.new(inventory, genres) }
 
     after(:each) do
@@ -71,7 +71,7 @@ describe 'RecordStore' do
     it 'should remove all records' do
       record_store.add record
       
-      expect { record_store.clear }.to change { record_store.buffer.count }.from(1).to(0)
+      expect { record_store.clear_buffer }.to change { record_store.buffer.count }.from(1).to(0)
     end
   end
 
