@@ -58,6 +58,10 @@ class RecordStore
     @buffer = []
   end
 
+  def refresh_buffer 
+    @records.each {|record| @buffer << record} unless @records.empty?
+  end
+
   def sort(*header_terms, **options)
     term = header_terms.shift
     position = @headers.index(term)
@@ -94,11 +98,6 @@ class RecordStore
     snippets.each {|item| @buffer << item.split(', ')}
     return self.sort(*header_terms, **options) unless header_terms.empty?
     return RecordStore.new(@inventory, @headers.join(', '), snippets)
-  end
-
-  private #----------------------------------------->>>
-  def refresh_buffer 
-    @records.each {|record| @buffer << record} unless @records.empty?
   end
 end
 
