@@ -78,6 +78,16 @@ describe 'RecordStore' do
     end
   end
 
+  describe '#refresh_buffer' do
+    let(:dummy_inventory) { 'spec/dummy-records.csv' }
+
+    it 'should fill @buffer from @records if @records present and there are no new records passed' do
+      record_store = RecordStore.new(dummy_inventory, genres)
+      expect(record_store.buffer).not_to be_empty
+    end
+  end
+
+
   describe '#sort' do
     let(:record_store) { RecordStore.new(inventory, genres) }
     let(:record_1) { 'McPersonson, Person, F, red, 4/20/1990' }
