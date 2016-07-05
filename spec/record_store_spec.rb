@@ -1,4 +1,4 @@
-require_relative 'record_store'
+require_relative 'spec_helper'
 
 describe 'RecordStore' do
   let(:inventory) { 'test-records.csv' }
