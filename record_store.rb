@@ -32,7 +32,7 @@ class RecordStore
     end
     @inventory = fpath
 
-    refresh_buffer if new_record_strs.empty?
+    self.refresh_buffer if new_record_strs.empty?
     new_record_strs.each {|record| self.add record} unless new_record_strs.empty?
   end
 
