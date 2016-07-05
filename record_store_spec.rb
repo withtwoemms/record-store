@@ -21,18 +21,23 @@ describe 'RecordStore' do
   describe '#add' do
     let(:record_store) { RecordStore.new(inventory, genres) }
     let(:record_1) { 'McPersonson, Person, F, red, 4/20/1990' }
-    let(:record_2) { 'McPersonson | Person | F | red | 4/20/1990' }
+    let(:record_2) { 'McPersonson | Person | M | red | 4/20/1990' }
     let(:record_3) { 'McPersonson, Person, F, red' } 
+    let(:records) { [record_1, record_2] }
+
+    before(:each) do
+      records.each {|record| record_store.add record}
+    end
 
     after(:all) do
       File.delete('test-records.csv') if File.exist? 'test-records.csv'
     end
 
     it 'should increase the number of records by 1' do
-      expect { record_store.add record_1 }.to change { record_store.records.count }.by(1)
+      expect { record_store.add record_1 }.to change { record_store.buffer.count }.by(1)
     end
     it 'should be able to handle "|" delimitting' do
-      expect { record_store.add record_2 }.to change { record_store.records.count }.by(1)
+      expect { record_store.add record_2 }.to change { record_store.buffer.count }.by(1)
     end
     it 'should throw an error if any field is invalid' do
       expect { record_store.add record_3 }.to raise_error(InvalidRecord)
@@ -66,7 +71,7 @@ describe 'RecordStore' do
     it 'should remove all records' do
       record_store.add record
       
-      expect { record_store.clear }.to change { record_store.records.count }.from(1).to(0)
+      expect { record_store.clear }.to change { record_store.buffer.count }.from(1).to(0)
     end
   end
 
@@ -89,7 +94,7 @@ describe 'RecordStore' do
     it 'should sort by some field and order ascending' do
       correct_order = [frecords[3], frecords[0], frecords[2], frecords[1]]
 
-      sorted_records = record_store.sort('DateOfBirth', :order => 'ASC').records
+      sorted_records = record_store.sort('DateOfBirth', :order => 'ASC').buffer
       correct_order.each_with_index do |frecord, i|
         expect(sorted_records[i]).to eql(frecord)
       end
@@ -97,7 +102,7 @@ describe 'RecordStore' do
     it 'should sort by some field and order descending' do
       correct_order = frecords
 
-      sorted_records = record_store.sort('LastName', :order => 'DESC').records
+      sorted_records = record_store.sort('LastName', :order => 'DESC').buffer
       correct_order.each_with_index do |frecord, i|
         expect(sorted_records[i]).to eql(frecord)
       end
@@ -105,7 +110,7 @@ describe 'RecordStore' do
     it 'should sort by multiple fields' do
       correct_order = [frecords[0], frecords[2], frecords[3], frecords[1]]
 
-      sorted_records = record_store.sort('Gender', 'LastName', :order => 'DESC').records
+      sorted_records = record_store.sort('Gender', 'LastName', :order => 'DESC').buffer
       correct_order.each_with_index do |frecord, i|
         expect(sorted_records[i]).to eql(frecord)
       end
