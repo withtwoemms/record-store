@@ -11,11 +11,13 @@ class RecordStore
     LastName, FirstName, Gender, FavoriteColor, DateOfBirth
   DOC
 
+  attr_accessor :buffer
   attr_reader   :headers, :inventory, :records
 
   def initialize(fpath, headers_str, new_record_strs=[])
     expected_headers = RecordStore.format headers_str
     @records = []
+    @buffer = []
     if File.exist? fpath
       CSV.foreach(fpath) do |row|
         @records << row.map(&:strip)
@@ -31,43 +33,74 @@ class RecordStore
     @inventory = fpath
 
     new_record_strs.each {|record| self.add record} unless new_record_strs.empty?
+    refresh_buffer
   end
 
   def export
+    # @buffer filled with records from file upon init
+    # @buffer written to file 
+
     CSV.open(@inventory, 'w+') do |csv|
       csv << @headers
-      @records.each {|record| csv << record}
+      @buffer.each {|record| csv << record}
     end
   end
 
   def add(record_str)
-    new_record = record_str.split(/,\s|\s\|\s/)
-    raise InvalidRecord if new_record.length != @headers.length
+    new_record = RecordStore.format record_str
+    raise InvalidRecord if new_record.length != @headers.length || new_record.nil?
 
-    @records << new_record
+    @buffer << new_record 
   end
 
-  def clear
-    @records = []
+  def clear_buffer
+    @buffer = []
   end
 
   def sort(*header_terms, **options)
-    header_positions = header_terms.map {|term| @headers.index(term)}    
-    header_positions.each do |position|
-      snippets = [] 
-      @records.each_with_index {|record, i| snippets << [i, record[position]]}
+    term = header_terms.shift
+    position = @headers.index(term)
 
+    # Special case for "Gender" bifurcation -- come up with clever generalization in the future :)
+    if term == "Gender"
+      next_term = header_terms.shift
+      next_position = @headers.index(next_term)
+      genders = @buffer.group_by {|record| record[position]}
       if options[:order] == 'ASC' || options[:order] == nil
-        snippets.sort_by! {|item| item.last}
+        genders['F'].sort_by! {|record| record[next_position]} 
+        genders['M'].sort_by! {|record| record[next_position]} 
       elsif options[:order] == 'DESC'
-        snippets.sort_by! {|item| item.last}.reverse!
+        genders['F'].sort_by! {|record| record[next_position]}.reverse!
+        genders['M'].sort_by! {|record| record[next_position]}.reverse!
       end
-      snippets.map! {|item| @records[item.first].join(', ')}
-
-      return RecordStore.new(@inventory, @headers.join(', '), snippets)
+      result = genders['F'] + genders['M']
+      result.map! {|record| record.join(', ')}
+      return RecordStore.new(@inventory, @headers.join(', '), result)
     end
+
+    snippets = [] 
+    raise EmptyBuffer if @buffer.empty?
+    @buffer.each_with_index {|record, i| snippets << [i, record[position]]}
+
+    if options[:order] == 'ASC' || options[:order] == nil
+      snippets.sort_by! {|item| item.last}
+    elsif options[:order] == 'DESC'
+      snippets.sort_by! {|item| item.last}.reverse!
+    end
+
+    snippets.map! {|item| @buffer[item.first].join(', ')}
+    self.clear_buffer
+    snippets.each {|item| @buffer << item.split(', ')}
+    return self.sort(*header_terms, **options) unless header_terms.empty?
+    return RecordStore.new(@inventory, @headers.join(', '), snippets)
+  end
+
+  private #----------------------------------------->>>
+  def refresh_buffer 
+    @records.each {|record| @buffer << record} unless @records.empty?
   end
 end
 
 class HeadersMismatch < StandardError; end 
 class InvalidRecord < StandardError; end
+class EmptyBuffer < StandardError; end
