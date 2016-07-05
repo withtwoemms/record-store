@@ -32,8 +32,8 @@ class RecordStore
     end
     @inventory = fpath
 
+    refresh_buffer if new_record_strs.empty?
     new_record_strs.each {|record| self.add record} unless new_record_strs.empty?
-    refresh_buffer
   end
 
   def export
@@ -63,7 +63,7 @@ class RecordStore
     position = @headers.index(term)
 
     # Special case for "Gender" bifurcation -- come up with clever generalization in the future :)
-    if term == "Gender"
+    if term == "Gender" && header_terms.count == 1
       next_term = header_terms.shift
       next_position = @headers.index(next_term)
       genders = @buffer.group_by {|record| record[position]}
