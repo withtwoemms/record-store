@@ -39,8 +39,11 @@ describe 'RecordStore' do
     it 'should be able to handle "|" delimitting' do
       expect { record_store.add record_2 }.to change { record_store.buffer.count }.by(1)
     end
-    it 'should throw an error if any field is invalid' do
+    it 'should throw an error if too fiew fields' do
       expect { record_store.add record_3 }.to raise_error(InvalidRecord)
+    end
+    it 'should throw an error if too fiew fields' do
+      expect { record_store.add nil }.to raise_error(InvalidRecord)
     end
   end
 

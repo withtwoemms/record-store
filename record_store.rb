@@ -47,6 +47,7 @@ class RecordStore
   end
 
   def add(record_str)
+    raise InvalidRecord if record_str.nil? 
     new_record = RecordStore.format record_str
     raise InvalidRecord if new_record.length != @headers.length || new_record.nil?
 
