@@ -7,6 +7,8 @@ require 'csv'
 DOC
 
 class RecordStore
+  include Operations
+
   def initialize(records:)
   end
 end
@@ -21,17 +23,19 @@ class RecordAcquirer
   end
 end
 
-class Sorter
-  def initialize(record_store:)
+module Operations
+  class Sorter
+    def initialize(record_store:)
+    end
   end
-end
 
-class Adder
-  def initialize(record_store:)
+  class Adder
+    def initialize(record_store:)
+    end
   end
-end
 
-class Exporter
-  def initialize(record_store:)
+  class Exporter
+    def initialize(record_store:)
+    end
   end
 end
