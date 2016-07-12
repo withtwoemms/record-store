@@ -1,21 +1,37 @@
 require 'csv'
 
+<<-DOC
+  Record Formats:
+  LastName | FirstName | Gender | FavoriteColor | DateOfBirth
+  LastName, FirstName, Gender, FavoriteColor, DateOfBirth
+DOC
+
 class RecordStore
-  <<-DOC
-    Record Formats:
-    LastName | FirstName | Gender | FavoriteColor | DateOfBirth
-    LastName, FirstName, Gender, FavoriteColor, DateOfBirth
-  DOC
-
-  def initialize(fpath, headers_str, new_record_strs=[])
+  def initialize(records:)
   end
+end
 
-  def export
+class Record
+  def initialize(row:)
   end
+end
 
-  def add(record_str)
+class RecordAcquirer
+  def initialize(fpath:)
   end
+end
 
-  def sort(*header_terms, **options)
+class Sorter
+  def initialize(record_store:)
+  end
+end
+
+class Adder
+  def initialize(record_store:)
+  end
+end
+
+class Exporter
+  def initialize(record_store:)
   end
 end
