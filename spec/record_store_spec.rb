@@ -7,22 +7,6 @@ describe 'RecordAcquirer' do
 end
 
 describe 'RecordStore' do
-  let(:inventory) { 'test-records.csv' }
-  let(:genres) { 'LastName, FirstName, Gender, FavoriteColor, DateOfBirth' }
-  let(:record) { 'McPersonson, Person, F, red, 4/20/1990' }
-
-  describe '#initialize' do
-    let(:fake_genres) { 'These, Are, The, Fake, Headers' }
-
-    after(:each) do
-      File.delete('test-records.csv') if File.exist? 'test-records.csv'
-    end
-
-    it 'should throw a HeadersMismatch error if existing "inventory" file has unexpected headers' do
-      RecordStore.new(inventory, record)
-      expect { RecordStore.new(inventory, fake_genres) }.to raise_error(HeadersMismatch)
-    end
-  end
 end
 
 describe 'Operations' do
