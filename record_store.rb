@@ -31,7 +31,7 @@ end
 
 module Operations
   class Adder
-    def initialize(record_store:)
+    def initialize(record_store:, record:)
     end
   end
 
