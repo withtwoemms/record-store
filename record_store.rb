@@ -30,11 +30,6 @@ class RecordAcquirer
 end
 
 module Operations
-  class Sorter
-    def initialize(record_store:)
-    end
-  end
-
   class Adder
     def initialize(record_store:)
     end
@@ -44,14 +39,23 @@ module Operations
     def initialize(record_store:)
     end
   end
+
+  class Sorter
+    def initialize(record_store:)
+    end
+  end
 end
+
+
+#-- MAIN INTERFACE ----------------------------------------->>>
 
 class RecordStore
   include Operations
 
-  attr_reader   :records
+  attr_reader   :inventory, :records
   
-  def initialize(file:)
-    @records = RecordAcquirer.fetch_records_from(file: file)
+  def initialize(filepath:)
+    @records = RecordAcquirer.fetch_records_from(file: filepath)
+    @inventory = filepath
   end
 end
