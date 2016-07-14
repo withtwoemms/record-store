@@ -51,7 +51,7 @@ class RecordStore
 
   attr_reader   :records
   
-  def initialize
-    @records = RecordAcquirer.fetch_records_from(file: 'records.csv')
+  def initialize(file:)
+    @records = RecordAcquirer.fetch_records_from(file: file)
   end
 end
