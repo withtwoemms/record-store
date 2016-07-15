@@ -15,14 +15,14 @@ class Record
 end
 
 class RecordAcquirer
-  def self.fetch_records_from(file:)
+  def self.fetch_records_from(filepath:)
     records = []
-    if File.exist? file
-      CSV.foreach(file) do |row|
+    if File.exist? filepath
+      CSV.foreach(filepath) do |row|
         records << row.map(&:strip)
       end
     else
-      raise 'FileNotFound'
+      warn("\n#{'*'*20}\nFile not found...\nCreating new file instead\n#{'*'*20}\n")
     end
     headers = records.shift
     return records.map {|row| Record.new(row: row, headers: headers)}
@@ -31,7 +31,7 @@ end
 
 module Operations
   class Adder
-    def initialize(record_store:, record:)
+    def initialize(record_store:)
     end
   end
 
@@ -55,7 +55,7 @@ class RecordStore
   attr_reader   :inventory, :records
   
   def initialize(filepath:)
-    @records = RecordAcquirer.fetch_records_from(file: filepath)
+    @records = RecordAcquirer.fetch_records_from(filepath: filepath)
     @inventory = filepath
   end
 end
