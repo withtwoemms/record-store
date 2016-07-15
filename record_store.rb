@@ -15,16 +15,21 @@ class Record
 end
 
 class RecordAcquirer
-  def self.fetch_records_from(filepath:)
+  def self.fetch_or_create_records_from(filepath:, headers: nil)
     records = []
     if File.exist? filepath
       CSV.foreach(filepath) do |row|
         records << row.map(&:strip)
       end
+      headers = records.shift
+    elsif headers
+      warn("\n#{'*'*20}\nFile not found...\nCreated new file instead\n#{'*'*20}\n\n")
+      CSV.open(filepath, 'w+') do |csv|
+        csv << headers
+      end
     else
-      warn("\n#{'*'*20}\nFile not found...\nCreating new file instead\n#{'*'*20}\n")
+      warn("\n#{'*'*20}\nFile not found...\nNo headers given\n#{'*'*20}\n\n")
     end
-    headers = records.shift
     return records.map {|row| Record.new(row: row, headers: headers)}
   end
 end
@@ -54,8 +59,8 @@ class RecordStore
 
   attr_reader   :inventory, :records
   
-  def initialize(filepath:)
-    @records = RecordAcquirer.fetch_records_from(filepath: filepath)
+  def initialize(filepath:, headers: nil)
+    @records = RecordAcquirer.fetch_or_create_records_from(filepath: filepath, headers: headers)
     @inventory = filepath
   end
 end
