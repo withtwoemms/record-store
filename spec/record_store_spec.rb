@@ -1,6 +1,21 @@
 require_relative 'spec_helper'
 
 describe 'Record' do
+  describe '#initialize' do
+    let(:inventory) { 'test-records.csv' }
+    let(:headers) { 'LastName,FirstName,Gender,FavoriteColor,DateOfBirth'.split(',') }
+    let(:row) { 'McPersonson,Person,F,red,4/20/1990'.split(',') }
+    #let(:record_store) { RecordStore.new(filepath: inventory, headers: headers) }
+    let(:record) { Record.new(row: row, headers: headers) }
+
+    after(:each) do
+      File.delete('test-records.csv') if File.exist? 'test-records.csv'
+    end
+
+    it 'should have content' do
+      expect(record.content.class).to be(Hash) 
+    end
+  end
 end
 
 describe 'RecordAcquirer' do
@@ -9,13 +24,13 @@ end
 describe 'RecordStore' do
 end
 
+=begin
 describe 'Operations' do
   describe '::Adder' do
-    describe '#add' do
-      let(:record_store) { RecordStore.new(inventory, genres) }
+    describe '#initialize' do
+      #let(:record_store) { RecordStore.new(inventory, genres) }
       let(:record_1) { 'McPersonson, Person, F, red, 4/20/1990' }
       let(:record_2) { 'McPersonson | Person | M | red | 4/20/1990' }
-      let(:record_3) { 'McPersonson, Person, F, red' } 
       let(:records) { [record_1, record_2] }
 
       before(:each) do
@@ -32,18 +47,12 @@ describe 'Operations' do
       it 'should be able to handle "|" delimitting' do
         expect { record_store.add record_2 }.to change { record_store.buffer.count }.by(1)
       end
-      it 'should throw an error if too fiew fields' do
-        expect { record_store.add record_3 }.to raise_error(InvalidRecord)
-      end
-      it 'should throw an error if too fiew fields' do
-        expect { record_store.add nil }.to raise_error(InvalidRecord)
-      end
     end
   end
 
   describe '::Sorter' do
     describe '#sort' do
-      let(:record_store) { RecordStore.new(inventory, genres) }
+      #let(:record_store) { RecordStore.new(inventory, genres) }
       let(:record_1) { 'McPersonson, Person, F, red, 4/20/1990' }
       let(:record_2) { 'McDoggerson | Dog | M | yellow | 4/20/2009' }
       let(:record_3) { 'McCatterson, Cat, F, blue, 4/20/2005' } 
@@ -87,7 +96,7 @@ describe 'Operations' do
 
   describe '::Exporter' do
     describe '#export' do
-      let(:record_store) { RecordStore.new(inventory, genres) }
+      #let(:record_store) { RecordStore.new(inventory, genres) }
       
       after(:each) do
         File.delete('test-records.csv') if File.exist? 'test-records.csv'
@@ -106,7 +115,7 @@ describe 'Operations' do
 end
 
 describe '#clear_buffer' do
-  let(:record_store) { RecordStore.new(inventory, genres) }
+  #let(:record_store) { RecordStore.new(inventory, genres) }
 
   after(:each) do
     File.delete('test-records.csv') if File.exist? 'test-records.csv'
@@ -120,10 +129,11 @@ describe '#clear_buffer' do
 end
 
 describe '#refresh_buffer' do
-  let(:dummy_inventory) { 'spec/dummy-records.csv' }
+  #let(:dummy_inventory) { 'spec/dummy-records.csv' }
 
   it 'should fill @buffer from @records if @records present and there are no new records passed' do
     record_store = RecordStore.new(dummy_inventory, genres)
     expect(record_store.buffer).not_to be_empty
   end
 end
+=end
