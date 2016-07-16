@@ -18,6 +18,28 @@ describe 'Record' do
 end
 
 describe 'RecordAcquirer' do
+  let(:dummy_inventory) { 'spec/dummy-records.csv' }
+  let(:fake_inventory) { 'fake-records.csv' }
+  let(:headers) { ["LastName", "FirstName", "Gender", "FavoriteColor", "DateOfBirth"] }
+
+  describe '#fetch_or_create_records_from' do
+    after(:each) do
+      File.delete('fake-records.csv') if File.exist? 'fake-records.csv'
+    end
+
+    it 'should return an array of Record objects if reading from file' do
+      records = RecordAcquirer.fetch_or_create_records_from(filepath: dummy_inventory, headers: headers)
+      expect(records.all? {|record| record.class == Record}).to be(true)
+    end 
+    it 'should create a file if file not present and headers given' do
+      RecordAcquirer.fetch_or_create_records_from(filepath: fake_inventory, headers: headers)
+      expect(File.exist? fake_inventory).to be(true)
+    end 
+    it 'should NOT create a file if file not present and headers NOT given' do
+      RecordAcquirer.fetch_or_create_records_from(filepath: fake_inventory)
+      expect(File.exist? fake_inventory).to be(false)
+    end 
+  end
 end
 
 describe 'RecordStore' do
