@@ -2,8 +2,8 @@ require_relative 'spec_helper'
 
 describe 'Record' do
   let(:inventory) { 'test-records.csv' }
-  let(:headers) { 'LastName,FirstName,Gender,FavoriteColor,DateOfBirth'.split(',') }
-  let(:row) { 'McPersonson,Person,F,red,4/20/1990'.split(',') }
+  let(:headers) { ["LastName", "FirstName", "Gender", "FavoriteColor", "DateOfBirth"] }
+  let(:row) { ["McPersonson", "Person", "F", "red", "4/20/1990"] }
   let(:record) { Record.new(row: row, headers: headers) }
 
   describe '#initialize' do
