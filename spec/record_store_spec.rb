@@ -1,13 +1,12 @@
 require_relative 'spec_helper'
 
 describe 'Record' do
-  describe '#initialize' do
-    let(:inventory) { 'test-records.csv' }
-    let(:headers) { 'LastName,FirstName,Gender,FavoriteColor,DateOfBirth'.split(',') }
-    let(:row) { 'McPersonson,Person,F,red,4/20/1990'.split(',') }
-    #let(:record_store) { RecordStore.new(filepath: inventory, headers: headers) }
-    let(:record) { Record.new(row: row, headers: headers) }
+  let(:inventory) { 'test-records.csv' }
+  let(:headers) { 'LastName,FirstName,Gender,FavoriteColor,DateOfBirth'.split(',') }
+  let(:row) { 'McPersonson,Person,F,red,4/20/1990'.split(',') }
+  let(:record) { Record.new(row: row, headers: headers) }
 
+  describe '#initialize' do
     after(:each) do
       File.delete('test-records.csv') if File.exist? 'test-records.csv'
     end
