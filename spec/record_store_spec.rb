@@ -43,6 +43,22 @@ describe 'RecordAcquirer' do
 end
 
 describe 'RecordStore' do
+  let(:inventory) { 'test-records.csv' }
+  let(:headers) { ["LastName", "FirstName", "Gender", "FavoriteColor", "DateOfBirth"] }
+  let(:record_store) { RecordStore.new(filepath: inventory, headers: headers) }
+
+  describe '#initialize' do
+    after(:each) do
+      File.delete('test-records.csv') if File.exist? 'test-records.csv'
+    end
+
+    it 'should have @records associated if records fetched from file' do
+      expect(record_store.records.all? {|record| record.class == Record}).to be(true)
+    end
+    it 'should have a @inventory if instantiated' do
+      expect(record_store.inventory.class).to be(String)
+    end
+  end
 end
 
 =begin
