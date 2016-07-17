@@ -35,17 +35,17 @@ class RecordAcquirer
 end
 
 module Operations
-  class Adder
+  class Add
     def initialize(record_store:)
     end
   end
 
-  class Exporter
+  class Export
     def initialize(record_store:)
     end
   end
 
-  class Sorter
+  class Sort
     def initialize(record_store:)
     end
   end
