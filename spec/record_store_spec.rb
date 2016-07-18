@@ -97,6 +97,31 @@ describe 'Operations' do
     end
   end
 
+  describe '::Export' do
+    let(:dummy_inventory) { 'spec/dummy-records.csv' }
+    let(:headers) { ["LastName", "FirstName", "Gender", "FavoriteColor", "DateOfBirth"] }
+
+    describe '#initialize' do
+      let(:inventory) { 'test-records.csv' }
+      let(:record_store) { RecordStore.new(filepath: dummy_inventory, headers: headers) }
+      
+      after(:each) do
+        File.delete('test-records.csv') if File.exist? 'test-records.csv'
+        #File.delete('dummy-records.csv') if File.exist? 'dummy-records.csv'
+      end
+
+      it 'should save @records to file' do
+        original_num_records = record_store.records.count
+        record_store.add 'McGatorson,Alligator,M,teal,4/20/1912'
+        record_store.export(filepath: inventory)
+        
+        new_record_store = RecordStore.new(filepath: inventory, headers: headers)
+        expect(new_record_store.records.count).to be > original_num_records
+      end
+    end
+    #describe '#to_file' do
+    #end
+  end
 =begin
   describe '::Sorter' do
     describe '#sort' do
@@ -142,24 +167,6 @@ describe 'Operations' do
     end
   end
 
-  describe '::Exporter' do
-    describe '#export' do
-      #let(:record_store) { RecordStore.new(inventory, genres) }
-      
-      after(:each) do
-        File.delete('test-records.csv') if File.exist? 'test-records.csv'
-      end
-
-      it 'should save @records to file' do
-        original_num_records = record_store.records.count
-        record_store.add record
-        record_store.export
-        
-        new_record_store = RecordStore.new inventory, genres
-        expect(new_record_store.records.count).to be > original_num_records
-      end
-    end
-  end
 end
 
 describe '#clear_buffer' do

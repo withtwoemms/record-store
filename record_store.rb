@@ -51,7 +51,20 @@ module Operations
   end
 
   class Export
-    def initialize(record_store:)
+    attr_reader :records, :filepath
+
+    def initialize(record_store)
+      #raise 'NotImplementedYet'
+      @records = record_store.records       
+      @headers = record_store.genres
+      @filepath = record_store.inventory
+    end
+
+    def to_file
+      CSV.open(@inventory, 'w+') do |csv|
+        csv << @headers
+        @records.each {|record| csv << record}
+      end 
     end
   end
 
@@ -78,5 +91,9 @@ class RecordStore
   def add(record_str)
     new_record = Add.new(new_record_str: record_str, headers: @genres).new_record
     @records << new_record
+  end
+  
+  def export(filepath: @inventory)
+    raise 'NotImplemented'
   end
 end
