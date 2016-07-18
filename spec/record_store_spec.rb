@@ -61,11 +61,24 @@ describe 'RecordStore' do
   end
 end
 
-=begin
 describe 'Operations' do
-  describe '::Adder' do
+  let(:inventory) { 'test-records.csv' }
+  let(:headers) { ["LastName", "FirstName", "Gender", "FavoriteColor", "DateOfBirth"] }
+
+  describe '::Add' do
     describe '#initialize' do
-      #let(:record_store) { RecordStore.new(inventory, genres) }
+      let(:record_1) { 'McPersonson, Person, F, red, 4/20/1990' }
+
+      after(:all) do
+        File.delete('test-records.csv') if File.exist? 'test-records.csv'
+      end
+  
+      it 'should return an Add object with a new_record' do
+        new_record = Operations::Add.new(new_record_str: record_1, headers: headers).new_record
+        expect(new_record.class).to be(Record)
+      end
+
+=begin
       let(:record_1) { 'McPersonson, Person, F, red, 4/20/1990' }
       let(:record_2) { 'McPersonson | Person | M | red | 4/20/1990' }
       let(:records) { [record_1, record_2] }
@@ -74,19 +87,17 @@ describe 'Operations' do
         records.each {|record| record_store.add record}
       end
 
-      after(:all) do
-        File.delete('test-records.csv') if File.exist? 'test-records.csv'
-      end
-
       it 'should increase the number of records by 1' do
         expect { record_store.add record_1 }.to change { record_store.buffer.count }.by(1)
       end
       it 'should be able to handle "|" delimitting' do
         expect { record_store.add record_2 }.to change { record_store.buffer.count }.by(1)
       end
+=end
     end
   end
 
+=begin
   describe '::Sorter' do
     describe '#sort' do
       #let(:record_store) { RecordStore.new(inventory, genres) }
@@ -172,5 +183,5 @@ describe '#refresh_buffer' do
     record_store = RecordStore.new(dummy_inventory, genres)
     expect(record_store.buffer).not_to be_empty
   end
-end
 =end
+end
