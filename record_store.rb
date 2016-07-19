@@ -12,6 +12,10 @@ class Record
   def initialize(row:, headers:)
     @content = Hash[headers.zip(row)]
   end
+  
+  def to_row
+    return content.values
+  end
 end
 
 class RecordAcquirer
@@ -51,19 +55,18 @@ module Operations
   end
 
   class Export
-    attr_reader :records, :filepath
+    attr_reader :records, :headers, :filepath
 
-    def initialize(record_store)
-      #raise 'NotImplementedYet'
+    def initialize(record_store, filepath:)
       @records = record_store.records       
       @headers = record_store.genres
-      @filepath = record_store.inventory
+      @filepath = filepath || record_store.inventory
     end
 
     def to_file
-      CSV.open(@inventory, 'w+') do |csv|
+      CSV.open(@filepath, 'w+') do |csv|
         csv << @headers
-        @records.each {|record| csv << record}
+        @records.map(&:to_row).each {|row| csv << row}
       end 
     end
   end
@@ -94,6 +97,7 @@ class RecordStore
   end
   
   def export(filepath: @inventory)
-    raise 'NotImplemented'
+    exporter = Export.new(self, filepath: filepath)
+    exporter.to_file
   end
 end
