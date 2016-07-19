@@ -73,6 +73,7 @@ module Operations
 
   class Sort
     def initialize(record_store:)
+      raise 'NotImplemented'
     end
   end
 end
@@ -99,5 +100,9 @@ class RecordStore
   def export(filepath: @inventory)
     exporter = Export.new(self, filepath: filepath)
     exporter.to_file
+  end
+
+  def sort(by:, order:)
+    raise 'NotImplemented'
   end
 end

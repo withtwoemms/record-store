@@ -142,51 +142,37 @@ describe 'Operations' do
       end
     end
   end
-=begin
+
   describe '::Sorter' do
     describe '#sort' do
-      #let(:record_store) { RecordStore.new(inventory, genres) }
-      let(:record_1) { 'McPersonson, Person, F, red, 4/20/1990' }
-      let(:record_2) { 'McDoggerson | Dog | M | yellow | 4/20/2009' }
-      let(:record_3) { 'McCatterson, Cat, F, blue, 4/20/2005' } 
-      let(:record_4) { 'McBirdson, Bird, F, purple, 4/20/1943' } 
-      let(:records) { [record_1, record_2, record_3, record_4] }
-      let(:frecords) { records.map {|record| RecordStore.format record} }
+      let(:dummy_inventory) { 'spec/dummy-records.csv' }
+      let(:record_store) { RecordStore.new(filepath: dummy_inventory, headers: headers) }
+      let(:records) { record_store.records }
+      let(:indexed_records) { Hash[(1..records.count).to_a.zip(records)] }
 
-      before(:each) do
-        records.each {|record| record_store.add record}
-      end
+
       after(:each) do
         File.delete('test-records.csv') if File.exist? 'test-records.csv'
       end
 
       it 'should sort by some field and order ascending' do
-        correct_order = [frecords[3], frecords[0], frecords[2], frecords[1]]
-
-        sorted_records = record_store.sort('DateOfBirth', :order => 'ASC').buffer
-        correct_order.each_with_index do |frecord, i|
-          expect(sorted_records[i]).to eql(frecord)
+        correct_order = [4, 3, 2, 1].map {|index| indexed_records[index]}
+        sorted_records = record_store.sort by: 'LastName', order: 'ASC'
+        correct_order.each_with_index do |record, i| 
+          expect(sorted_records[i]).to eql(record)
         end
       end
       it 'should sort by some field and order descending' do
-        correct_order = frecords
-
-        sorted_records = record_store.sort('LastName', :order => 'DESC').buffer
-        correct_order.each_with_index do |frecord, i|
-          expect(sorted_records[i]).to eql(frecord)
+        correct_order = [1, 2, 3, 4].map {|index| indexed_records[index]}
+        sorted_records = record_store.sort by: 'LastName', order: 'DESC'
+        correct_order.each_with_index do |record, i| 
+          expect(sorted_records[i]).to eql(record)
         end
       end
       it 'should sort by multiple fields' do
-        correct_order = [frecords[0], frecords[2], frecords[3], frecords[1]]
-
-        sorted_records = record_store.sort('Gender', 'LastName', :order => 'DESC').buffer
-        correct_order.each_with_index do |frecord, i|
-          expect(sorted_records[i]).to eql(frecord)
-        end
+        fail
       end
     end
   end
 
-end
-=end
 end
