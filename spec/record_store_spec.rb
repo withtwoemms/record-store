@@ -66,7 +66,6 @@ describe 'RecordStore' do
     let(:records) { [record_1, record_2] }
 
     it 'should increase the number of records by 1' do
-      puts record_store.records.count
       expect { record_store.add record_1 }.to change { record_store.records.count }.from(0).to(1)
     end
     it 'should be able to handle "|" delimitting' do
@@ -133,6 +132,14 @@ describe 'Operations' do
     end
 
     describe '#to_file' do
+      let(:exporter) { Operations::Export.new(record_store, filepath: 'tmp.csv') }
+
+      after(:each) { File.delete('tmp.csv') if File.exist? 'tmp.csv' }
+
+      it 'should create a CSV at given filepath' do
+        exporter.to_file
+        expect(File.exist? 'tmp.csv').to be(true)
+      end
     end
   end
 =begin
@@ -181,27 +188,5 @@ describe 'Operations' do
   end
 
 end
-
-describe '#clear_buffer' do
-  #let(:record_store) { RecordStore.new(inventory, genres) }
-
-  after(:each) do
-    File.delete('test-records.csv') if File.exist? 'test-records.csv'
-  end
-
-  it 'should remove all records' do
-    record_store.add record
-    
-    expect { record_store.clear_buffer }.to change { record_store.buffer.count }.from(1).to(0)
-  end
-end
-
-describe '#refresh_buffer' do
-  #let(:dummy_inventory) { 'spec/dummy-records.csv' }
-
-  it 'should fill @buffer from @records if @records present and there are no new records passed' do
-    record_store = RecordStore.new(dummy_inventory, genres)
-    expect(record_store.buffer).not_to be_empty
-  end
 =end
 end
