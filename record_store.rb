@@ -11,7 +11,6 @@ class Record
 
   def initialize(row:, headers:)
     @content = Hash[headers.zip(row)]
-    @content.update({"id" => ObjectSpace.each_object(Record).count})
   end
   
   def to_row
