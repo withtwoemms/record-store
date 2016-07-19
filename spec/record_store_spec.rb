@@ -59,6 +59,40 @@ describe 'RecordStore' do
       expect(record_store.inventory.class).to be(String)
     end
   end
+  
+  describe '#add' do
+    let(:record_1) { 'McPersonson, Person, F, red, 4/20/1990' }
+    let(:record_2) { 'McPersonson | Person | M | red | 4/20/1990' }
+    let(:records) { [record_1, record_2] }
+
+    it 'should increase the number of records by 1' do
+      puts record_store.records.count
+      expect { record_store.add record_1 }.to change { record_store.records.count }.from(0).to(1)
+    end
+    it 'should be able to handle "|" delimitting' do
+      expect { record_store.add record_2 }.to change { record_store.records.count }.from(0).to(1)
+    end
+  end
+  
+  describe '#export' do
+    let(:dummy_inventory) { 'spec/dummy-records.csv' }
+    let(:inventory) { 'test-records.csv' }
+    let(:headers) { ["LastName", "FirstName", "Gender", "FavoriteColor", "DateOfBirth"] }
+    let(:record_store) { RecordStore.new(filepath: dummy_inventory, headers: headers) }
+    
+    after(:each) do
+      File.delete('test-records.csv') if File.exist? 'test-records.csv'
+    end
+
+    it 'should save @records to file' do
+      original_num_records = record_store.records.count
+      record_store.add 'McGatorson,Alligator,M,teal,4/20/1912'
+      record_store.export(filepath: inventory)
+      
+      new_record_store = RecordStore.new(filepath: inventory, headers: headers)
+      expect(new_record_store.records.count).to be > original_num_records
+    end
+  end
 end
 
 describe 'Operations' do
@@ -69,7 +103,7 @@ describe 'Operations' do
     describe '#initialize' do
       let(:record_1) { 'McPersonson, Person, F, red, 4/20/1990' }
 
-      after(:all) do
+      after(:each) do
         File.delete('test-records.csv') if File.exist? 'test-records.csv'
       end
   
@@ -77,50 +111,29 @@ describe 'Operations' do
         new_record = Operations::Add.new(new_record_str: record_1, headers: headers).new_record
         expect(new_record.class).to be(Record)
       end
-
-=begin
-      let(:record_1) { 'McPersonson, Person, F, red, 4/20/1990' }
-      let(:record_2) { 'McPersonson | Person | M | red | 4/20/1990' }
-      let(:records) { [record_1, record_2] }
-
-      before(:each) do
-        records.each {|record| record_store.add record}
-      end
-
-      it 'should increase the number of records by 1' do
-        expect { record_store.add record_1 }.to change { record_store.buffer.count }.by(1)
-      end
-      it 'should be able to handle "|" delimitting' do
-        expect { record_store.add record_2 }.to change { record_store.buffer.count }.by(1)
-      end
-=end
     end
   end
 
   describe '::Export' do
-    let(:dummy_inventory) { 'spec/dummy-records.csv' }
-    let(:headers) { ["LastName", "FirstName", "Gender", "FavoriteColor", "DateOfBirth"] }
+    let(:record_store) { RecordStore.new(filepath: inventory, headers: headers) }
+    let(:ivars) { record_store.instance_variables.map {|sym| sym.to_s.gsub(/@/,'').to_sym} }
+
+    after(:each) do
+      File.delete('test-records.csv') if File.exist? 'test-records.csv'
+    end
 
     describe '#initialize' do
-      let(:inventory) { 'test-records.csv' }
-      let(:record_store) { RecordStore.new(filepath: dummy_inventory, headers: headers) }
-      
-      after(:each) do
-        File.delete('test-records.csv') if File.exist? 'test-records.csv'
-        #File.delete('dummy-records.csv') if File.exist? 'dummy-records.csv'
-      end
+      let(:exporter) { Operations::Export.new(record_store, filepath: inventory) }
+      let(:e_ivars) { exporter.instance_variables.map {|sym| sym.to_s.gsub(/@/,'').to_sym} }
+      let(:necessary_attrs) { Hash[e_ivars.zip(ivars.map {|v| record_store.send v})] }
 
-      it 'should save @records to file' do
-        original_num_records = record_store.records.count
-        record_store.add 'McGatorson,Alligator,M,teal,4/20/1912'
-        record_store.export(filepath: inventory)
-        
-        new_record_store = RecordStore.new(filepath: inventory, headers: headers)
-        expect(new_record_store.records.count).to be > original_num_records
+      it 'should return an Export object with attribute necessary for RecordStore#export' do
+        expect(exporter).to have_attributes(necessary_attrs)
       end
     end
-    #describe '#to_file' do
-    #end
+
+    describe '#to_file' do
+    end
   end
 =begin
   describe '::Sorter' do
