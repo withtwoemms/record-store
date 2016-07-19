@@ -116,7 +116,6 @@ describe 'Operations' do
 
   describe '::Export' do
     let(:record_store) { RecordStore.new(filepath: inventory, headers: headers) }
-    let(:ivars) { record_store.instance_variables.map {|sym| sym.to_s.gsub(/@/,'').to_sym} }
 
     after(:each) do
       File.delete('test-records.csv') if File.exist? 'test-records.csv'
@@ -124,11 +123,12 @@ describe 'Operations' do
 
     describe '#initialize' do
       let(:exporter) { Operations::Export.new(record_store, filepath: inventory) }
-      let(:e_ivars) { exporter.instance_variables.map {|sym| sym.to_s.gsub(/@/,'').to_sym} }
-      let(:necessary_attrs) { Hash[e_ivars.zip(ivars.map {|v| record_store.send v})] }
+      let(:necessary_attrs) { [:filepath, :records, :headers] }      
 
       it 'should return an Export object with attribute necessary for RecordStore#export' do
-        expect(exporter).to have_attributes(necessary_attrs)
+        necessary_attrs.each do |attr|
+          expect(exporter).to respond_to(attr)
+        end
       end
     end
 
