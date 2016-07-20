@@ -104,9 +104,10 @@ end
 class RecordStore
   include Operations
 
-  attr_reader   :inventory, :records, :genres
+  attr_accessor :records
+  attr_reader   :inventory, :genres
   
-  def initialize(filepath:, headers:)
+  def initialize(filepath:, headers: nil)
     @records = RecordAcquirer.fetch_or_create_records_from(filepath: filepath, headers: headers)
     @genres = RecordAcquirer.headers
     @inventory = filepath
@@ -123,7 +124,7 @@ class RecordStore
     export.to_file
   end
 
-  def sort(by:, order:)
-    Sort.new(records: @records, by: by, order: order) 
+  def sort(by:, order: nil)
+    @records = Sort.new(records: @records, by: by, order: order).records
   end
 end
