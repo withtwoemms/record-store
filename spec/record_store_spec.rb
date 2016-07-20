@@ -181,24 +181,18 @@ describe 'Operations' do
 
       it 'should sort by some field and order ascending' do
         correct_order = [4, 3, 2, 1].map {|index| indexed_records[index]}
-        sorted_records = record_store.sort(by: 'LastName', order: 'ASC')
-        correct_order.each_with_index do |record, i| 
-          expect(sorted_records[i]).to eql(record)
-        end
+        record_store.sort(by: 'LastName', order: 'ASC')
+        expect(correct_order).to eql(record_store.records)
       end
       it 'should sort by some field and order descending' do
         correct_order = [1, 2, 3, 4].map {|index| indexed_records[index]}
-        sorted_records = record_store.sort(by: 'LastName', order: 'DESC')
-        correct_order.each_with_index do |record, i| 
-          expect(sorted_records[i]).to eql(record)
-        end
+        record_store.sort(by: 'LastName', order: 'DESC')
+        expect(correct_order).to eql(record_store.records)
       end
       it 'should sort by multiple fields' do
         correct_order = [4, 3, 1, 2].map {|index| indexed_records[index]}
-        sorted_records = record_store.sort(by: ['Gender', 'LastName'], order: 'ASC')
-        correct_order.each_with_index do |record, i| 
-          expect(sorted_records[i]).to eql(record)
-        end
+        record_store.sort(by: ['Gender', 'LastName'], order: 'ASC')
+        expect(correct_order).to eql(record_store.records)
       end
     end
   end
