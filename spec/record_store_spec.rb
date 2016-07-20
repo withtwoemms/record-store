@@ -177,7 +177,11 @@ describe 'Operations' do
         end
       end
       it 'should sort by multiple fields' do
-        fail
+        correct_order = [4, 3, 1, 2].map {|index| indexed_records[index]}
+        sorted = record_store.sort(by: ['Gender', 'LastName'], order: 'ASC')
+        correct_order.each_with_index do |record, i| 
+          expect(sorted.records[i]).to eql(record)
+        end
       end
     end
   end
