@@ -92,6 +92,23 @@ describe 'RecordStore' do
       expect(new_record_store.records.count).to be > original_num_records
     end
   end
+
+  describe '#sort' do
+    let(:dummy_inventory) { 'spec/dummy-records.csv' }
+    let(:inventory) { 'test-records.csv' }
+    let(:headers) { ["LastName", "FirstName", "Gender", "FavoriteColor", "DateOfBirth"] }
+    let(:record_store) { RecordStore.new(filepath: dummy_inventory, headers: headers) }
+
+    after(:each) do
+      File.delete('test-records.csv') if File.exist? 'test-records.csv'
+    end
+
+    it 'should sort an unsorted list of Records' do
+      original_record_order = record_store.records
+      record_store.sort(by: 'FavoriteColor')
+      expect(original_record_order).not_to eql(record_store.records)
+    end
+  end
 end
 
 describe 'Operations' do
@@ -164,23 +181,23 @@ describe 'Operations' do
 
       it 'should sort by some field and order ascending' do
         correct_order = [4, 3, 2, 1].map {|index| indexed_records[index]}
-        sorted = record_store.sort(by: 'LastName', order: 'ASC')
+        sorted_records = record_store.sort(by: 'LastName', order: 'ASC')
         correct_order.each_with_index do |record, i| 
-          expect(sorted.records[i]).to eql(record)
+          expect(sorted_records[i]).to eql(record)
         end
       end
       it 'should sort by some field and order descending' do
         correct_order = [1, 2, 3, 4].map {|index| indexed_records[index]}
-        sorted = record_store.sort(by: 'LastName', order: 'DESC')
+        sorted_records = record_store.sort(by: 'LastName', order: 'DESC')
         correct_order.each_with_index do |record, i| 
-          expect(sorted.records[i]).to eql(record)
+          expect(sorted_records[i]).to eql(record)
         end
       end
       it 'should sort by multiple fields' do
         correct_order = [4, 3, 1, 2].map {|index| indexed_records[index]}
-        sorted = record_store.sort(by: ['Gender', 'LastName'], order: 'ASC')
+        sorted_records = record_store.sort(by: ['Gender', 'LastName'], order: 'ASC')
         correct_order.each_with_index do |record, i| 
-          expect(sorted.records[i]).to eql(record)
+          expect(sorted_records[i]).to eql(record)
         end
       end
     end
