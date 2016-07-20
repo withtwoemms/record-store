@@ -106,7 +106,7 @@ describe 'Operations' do
         File.delete('test-records.csv') if File.exist? 'test-records.csv'
       end
   
-      it 'should return an Add object with a new_record' do
+      it 'should return an Add object with a record' do
         new_record = Operations::Add.new(record_str: record_1, headers: headers).record
         expect(new_record.class).to be(Record)
       end
@@ -145,7 +145,7 @@ describe 'Operations' do
       end
       it 'should write Records to file' do
         export.to_file
-        records_from_file = File.readlines('records.csv').map(&:strip)[1..-1]
+        records_from_file = File.readlines(dummy_inventory).map(&:strip)[1..-1]
         expect(records_from_file).to match(record_store.records.map(&:to_s)) 
       end
     end

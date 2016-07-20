@@ -123,7 +123,7 @@ class RecordStore
     export.to_file
   end
 
-  def sort(records: @records, by:, order:)
-    Sort.new(records: records, by: by, order: order) 
+  def sort(by:, order:)
+    Sort.new(records: @records, by: by, order: order) 
   end
 end
