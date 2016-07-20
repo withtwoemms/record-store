@@ -79,13 +79,21 @@ module Operations
     attr_reader :records, :by, :order
 
     def initialize(records:, by:, order:)
-      if order == 'ASC'
-        @records = records.sort_by {|record| record.content[by]}
-      elsif order == 'DESC'
-        @records = records.sort_by {|record| record.content[by]}.reverse
+      if by.class == Array
+        if order == 'ASC' || order == nil
+          @records = records.sort_by {|record| by.map {|term| record.content[term]}}
+        elsif order == 'DESC'
+          @records = records.sort_by {|record| by.map {|term| record.content[term]}}.reverse
+        end
+      else
+        if order == 'ASC' || order == nil
+          @records = records.sort_by {|record| record.content[by]}
+        elsif order == 'DESC'
+          @records = records.sort_by {|record| record.content[by]}.reverse
+        end
+        @by = by
+        @order = order       
       end
-      @by = by
-      @order = order       
     end
   end
 end
