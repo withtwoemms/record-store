@@ -16,6 +16,10 @@ class Record
   def to_row
     return content.values
   end
+
+  def to_s
+    return content.values.join(',')
+  end
 end
 
 class RecordAcquirer
@@ -46,21 +50,21 @@ end
 
 module Operations
   class Add
-    attr_reader :new_record
+    attr_reader :record
 
-    def initialize(new_record_str:, headers:)
-      formatted_record = new_record_str.split(/\s?+[,\|]\s?+/)
-      @new_record = Record.new(row: formatted_record, headers: headers)
+    def initialize(record_str:, headers:)
+      formatted_record = record_str.split(/\s?+[,\|]\s?+/)
+      @record = Record.new(row: formatted_record, headers: headers)
     end
   end
 
   class Export
     attr_reader :records, :headers, :filepath
 
-    def initialize(record_store, filepath:)
-      @records = record_store.records       
-      @headers = record_store.genres
-      @filepath = filepath || record_store.inventory
+    def initialize(filepath:, records:, headers:)
+      @records = records       
+      @headers = headers
+      @filepath = filepath
     end
 
     def to_file
@@ -72,8 +76,16 @@ module Operations
   end
 
   class Sort
-    def initialize(record_store:)
-      raise 'NotImplemented'
+    attr_reader :records, :by, :order
+
+    def initialize(records:, by:, order:)
+      if order == 'ASC'
+        @records = records.sort_by {|record| record.content[by]}
+      elsif order == 'DESC'
+        @records = records.sort_by {|record| record.content[by]}.reverse
+      end
+      @by = by
+      @order = order       
     end
   end
 end
@@ -86,23 +98,24 @@ class RecordStore
 
   attr_reader   :inventory, :records, :genres
   
-  def initialize(filepath:, headers: nil)
+  def initialize(filepath:, headers:)
     @records = RecordAcquirer.fetch_or_create_records_from(filepath: filepath, headers: headers)
     @genres = RecordAcquirer.headers
     @inventory = filepath
   end
 
-  def add(record_str)
-    new_record = Add.new(new_record_str: record_str, headers: @genres).new_record
+  def add(new_record_str:)
+    new_record = Add.new(record_str: new_record_str, headers: @genres).record
     @records << new_record
   end
   
-  def export(filepath: @inventory)
-    exporter = Export.new(self, filepath: filepath)
-    exporter.to_file
+  def export(filepath:)
+    filepath = filepath || @inventory
+    export = Export.new(filepath: filepath, records: @records, headers: @genres)
+    export.to_file
   end
 
-  def sort(by:, order:)
-    raise 'NotImplemented'
+  def sort(records: @records, by:, order:)
+    Sort.new(records: records, by: by, order: order) 
   end
 end
