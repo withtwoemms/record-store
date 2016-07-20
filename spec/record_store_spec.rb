@@ -66,10 +66,10 @@ describe 'RecordStore' do
     let(:records) { [record_1, record_2] }
 
     it 'should increase the number of records by 1' do
-      expect { record_store.add record_1 }.to change { record_store.records.count }.from(0).to(1)
+      expect { record_store.add(new_record_str: record_1) }.to change { record_store.records.count }.from(0).to(1)
     end
     it 'should be able to handle "|" delimitting' do
-      expect { record_store.add record_2 }.to change { record_store.records.count }.from(0).to(1)
+      expect { record_store.add(new_record_str: record_2) }.to change { record_store.records.count }.from(0).to(1)
     end
   end
   
@@ -85,7 +85,7 @@ describe 'RecordStore' do
 
     it 'should save @records to file' do
       original_num_records = record_store.records.count
-      record_store.add 'McGatorson,Alligator,M,teal,4/20/1912'
+      record_store.add(new_record_str: 'McGatorson,Alligator,M,teal,4/20/1912')
       record_store.export(filepath: inventory)
       
       new_record_store = RecordStore.new(filepath: inventory, headers: headers)
@@ -107,38 +107,46 @@ describe 'Operations' do
       end
   
       it 'should return an Add object with a new_record' do
-        new_record = Operations::Add.new(new_record_str: record_1, headers: headers).new_record
+        new_record = Operations::Add.new(record_str: record_1, headers: headers).record
         expect(new_record.class).to be(Record)
       end
     end
   end
 
   describe '::Export' do
-    let(:record_store) { RecordStore.new(filepath: inventory, headers: headers) }
-
     after(:each) do
       File.delete('test-records.csv') if File.exist? 'test-records.csv'
     end
 
     describe '#initialize' do
-      let(:exporter) { Operations::Export.new(record_store, filepath: inventory) }
+      let(:record_store) { RecordStore.new(filepath: inventory, headers: headers) }
+      let(:records) { record_store.records }
+      let(:export) { Operations::Export.new(filepath: inventory, records: records, headers: headers) }
       let(:necessary_attrs) { [:filepath, :records, :headers] }      
 
       it 'should return an Export object with attribute necessary for RecordStore#export' do
         necessary_attrs.each do |attr|
-          expect(exporter).to respond_to(attr)
+          expect(export).to respond_to(attr)
         end
       end
     end
 
     describe '#to_file' do
-      let(:exporter) { Operations::Export.new(record_store, filepath: 'tmp.csv') }
+      let(:dummy_inventory) { 'spec/dummy-records.csv' }
+      let(:record_store) { RecordStore.new(filepath: dummy_inventory, headers: headers) }
+      let(:records) { record_store.records }
+      let(:export) { Operations::Export.new(filepath: 'tmp.csv', records: records, headers: headers) }
 
       after(:each) { File.delete('tmp.csv') if File.exist? 'tmp.csv' }
 
       it 'should create a CSV at given filepath' do
-        exporter.to_file
+        export.to_file
         expect(File.exist? 'tmp.csv').to be(true)
+      end
+      it 'should write Records to file' do
+        export.to_file
+        records_from_file = File.readlines('records.csv').map(&:strip)[1..-1]
+        expect(records_from_file).to match(record_store.records.map(&:to_s)) 
       end
     end
   end
@@ -150,23 +158,22 @@ describe 'Operations' do
       let(:records) { record_store.records }
       let(:indexed_records) { Hash[(1..records.count).to_a.zip(records)] }
 
-
       after(:each) do
         File.delete('test-records.csv') if File.exist? 'test-records.csv'
       end
 
       it 'should sort by some field and order ascending' do
         correct_order = [4, 3, 2, 1].map {|index| indexed_records[index]}
-        sorted_records = record_store.sort by: 'LastName', order: 'ASC'
+        sorted = record_store.sort(by: 'LastName', order: 'ASC')
         correct_order.each_with_index do |record, i| 
-          expect(sorted_records[i]).to eql(record)
+          expect(sorted.records[i]).to eql(record)
         end
       end
       it 'should sort by some field and order descending' do
         correct_order = [1, 2, 3, 4].map {|index| indexed_records[index]}
-        sorted_records = record_store.sort by: 'LastName', order: 'DESC'
+        sorted = record_store.sort(by: 'LastName', order: 'DESC')
         correct_order.each_with_index do |record, i| 
-          expect(sorted_records[i]).to eql(record)
+          expect(sorted.records[i]).to eql(record)
         end
       end
       it 'should sort by multiple fields' do
