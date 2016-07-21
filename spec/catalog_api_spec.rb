@@ -27,19 +27,19 @@ describe Catalog::API do
 
     it 'works for params[:term] = gender' do
       get '/records/gender'
-      correct_order = [4, 3, 1, 2].map {|index| indexed_records[index].to_s}
+      correct_order = [4, 3, 1, 2].map {|index| indexed_records[index].content}
       api_response = JSON.parse(last_response.body)
       expect(api_response).to eql(correct_order)
     end
     it 'works for params[:term] = birthdate' do
       get '/records/birthdate'
-      correct_order = [4, 1, 3, 2].map {|index| indexed_records[index].to_s}
+      correct_order = [4, 1, 3, 2].map {|index| indexed_records[index].content}
       api_response = JSON.parse(last_response.body)
       expect(api_response).to eql(correct_order)
     end
     it 'works for params[:term] = name' do
       get '/records/name'
-      correct_order = [4, 3, 2, 1].map {|index| indexed_records[index].to_s}
+      correct_order = [4, 3, 2, 1].map {|index| indexed_records[index].content}
       api_response = JSON.parse(last_response.body)
       expect(api_response).to eql(correct_order)
     end

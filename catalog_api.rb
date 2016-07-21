@@ -17,19 +17,19 @@ module Catalog
       get :gender do
         record_store = RecordStore.new(filepath: inventory, headers: headers)
         record_store.sort(by: ['Gender', 'LastName'])
-        return record_store.records
+        return record_store.records.map(&:content)
       end
 
       get :birthdate do
         record_store = RecordStore.new(filepath: inventory, headers: headers)
         record_store.sort(by: 'DateOfBirth')
-        return record_store.records
+        return record_store.records.map(&:content)
       end
 
       get :name do
         record_store = RecordStore.new(filepath: inventory, headers: headers)
         record_store.sort(by: 'LastName')
-        return record_store.records
+        return record_store.records.map(&:content)
       end
     end
   end
