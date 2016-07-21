@@ -19,36 +19,29 @@ describe Catalog::API do
   end 
 
   describe 'GET /records/:term' do
-    let(:record_1) { 'McPersonson, Person, F, red, 4/20/1990' }
-    let(:record_2) { 'McDoggerson | Dog | M | yellow | 4/20/2009' }
-    let(:record_3) { 'McCatterson, Cat, F, blue, 4/20/2005' } 
-    let(:record_4) { 'McBirdson, Bird, F, purple, 4/20/1943' } 
-    let(:records) { [record_1, record_2, record_3, record_4] }
-    let(:frecords) { records.map {|record| RecordStore.format record} }
+    let(:headers) { ["LastName", "FirstName", "Gender", "FavoriteColor", "DateOfBirth"] }
+    let(:dummy_inventory) { 'spec/dummy-records.csv' }
+    let(:record_store) { RecordStore.new(filepath: dummy_inventory, headers: headers) }
+    let(:records) { record_store.records }
+    let(:indexed_records) { Hash[(1..records.count).to_a.zip(records)] }
 
     it 'works for params[:term] = gender' do
       get '/records/gender'
-      correct_order = [frecords[0], frecords[3], frecords[2], frecords[1]]
+      correct_order = [4, 3, 1, 2].map {|index| indexed_records[index].to_s}
       api_response = JSON.parse(last_response.body)
-      correct_order.each_with_index do |frecord, i|
-        expect(api_response[i]).to eql(frecord)
-      end
+      expect(api_response).to eql(correct_order)
     end
     it 'works for params[:term] = birthdate' do
       get '/records/birthdate'
-      correct_order = [frecords[3], frecords[0], frecords[2], frecords[1]]
+      correct_order = [4, 1, 3, 2].map {|index| indexed_records[index].to_s}
       api_response = JSON.parse(last_response.body)
-      correct_order.each_with_index do |frecord, i|
-        expect(api_response[i]).to eql(frecord)
-      end
+      expect(api_response).to eql(correct_order)
     end
     it 'works for params[:term] = name' do
       get '/records/name'
-      correct_order = frecords.reverse
+      correct_order = [4, 3, 2, 1].map {|index| indexed_records[index].to_s}
       api_response = JSON.parse(last_response.body)
-      correct_order.each_with_index do |frecord, i|
-        expect(api_response[i]).to eql(frecord)
-      end
+      expect(api_response).to eql(correct_order)
     end
   end
 end
