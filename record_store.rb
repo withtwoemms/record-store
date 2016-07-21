@@ -32,12 +32,12 @@ class RecordAcquirer
       end
       @@headers = records.shift
     elsif headers
-      warn("\n#{'*'*20}\nFile not found...\nCreated new file instead\n#{'*'*20}\n\n")
+      warn("\n>> WARNING #{'*'*9}\nFile not found...\nCreated new file instead\n#{'*'*20}\n\n")
       CSV.open(filepath, 'w+') do |csv|
         csv << headers
       end
     else
-      warn("\n#{'*'*20}\nFile not found...\nNo headers given\n#{'*'*20}\n\n")
+      warn("\n>> WARNING #{'*'*9}\nFile not found...\nNo headers given\n#{'*'*20}\n\n")
     end
     return records.map {|row| Record.new(row: row, headers: @@headers)}
   end
