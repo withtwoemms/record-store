@@ -11,6 +11,11 @@ module Catalog
     inventory = File.expand_path('db/records.csv')
     headers = ["LastName", "FirstName", "Gender", "FavoriteColor", "DateOfBirth"]
 
+    get :records do
+      record_store = RecordStore.new(filepath: inventory, headers: headers)
+      return record_store.records.map(&:content)
+    end
+
     resource :records do
       get :example do
         return {:example => "RECORDS OF THIS GENRE (#{params[:example]}) WILL GO HERE"}
