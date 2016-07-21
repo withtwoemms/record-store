@@ -168,13 +168,13 @@ describe 'Operations' do
     end
   end
 
-  describe '::Sorter' do
-    describe '#sort' do
-      let(:dummy_inventory) { 'spec/dummy-records.csv' }
-      let(:record_store) { RecordStore.new(filepath: dummy_inventory, headers: headers) }
-      let(:records) { record_store.records }
-      let(:indexed_records) { Hash[(1..records.count).to_a.zip(records)] }
+  describe '::Sort' do
+    let(:dummy_inventory) { 'spec/dummy-records.csv' }
+    let(:record_store) { RecordStore.new(filepath: dummy_inventory, headers: headers) }
+    let(:records) { record_store.records }
+    let(:indexed_records) { Hash[(1..records.count).to_a.zip(records)] }
 
+    describe '#initialize' do
       after(:each) do
         File.delete('test-records.csv') if File.exist? 'test-records.csv'
       end
