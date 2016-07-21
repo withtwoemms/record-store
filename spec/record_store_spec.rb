@@ -1,5 +1,9 @@
 require_relative 'spec_helper'
 
+
+Record = RecordStoreFileIO::Record
+RecordAcquirer = RecordStoreFileIO::RecordAcquirer
+
 describe 'Record' do
   let(:inventory) { 'test-records.csv' }
   let(:headers) { ["LastName", "FirstName", "Gender", "FavoriteColor", "DateOfBirth"] }
@@ -18,7 +22,7 @@ describe 'Record' do
 end
 
 describe 'RecordAcquirer' do
-  let(:dummy_inventory) { 'spec/dummy-records.csv' }
+  let(:dummy_inventory) { 'db/records.csv' }
   let(:fake_inventory) { 'fake-records.csv' }
   let(:headers) { ["LastName", "FirstName", "Gender", "FavoriteColor", "DateOfBirth"] }
 
@@ -74,7 +78,7 @@ describe 'RecordStore' do
   end
   
   describe '#export' do
-    let(:dummy_inventory) { 'spec/dummy-records.csv' }
+    let(:dummy_inventory) { 'db/records.csv' }
     let(:inventory) { 'test-records.csv' }
     let(:headers) { ["LastName", "FirstName", "Gender", "FavoriteColor", "DateOfBirth"] }
     let(:record_store) { RecordStore.new(filepath: dummy_inventory, headers: headers) }
@@ -94,7 +98,7 @@ describe 'RecordStore' do
   end
 
   describe '#sort' do
-    let(:dummy_inventory) { 'spec/dummy-records.csv' }
+    let(:dummy_inventory) { 'db/records.csv' }
     let(:inventory) { 'test-records.csv' }
     let(:headers) { ["LastName", "FirstName", "Gender", "FavoriteColor", "DateOfBirth"] }
     let(:record_store) { RecordStore.new(filepath: dummy_inventory, headers: headers) }
@@ -111,7 +115,7 @@ describe 'RecordStore' do
   end
 end
 
-describe 'Operations' do
+describe 'RecordStoreOperations' do
   let(:inventory) { 'test-records.csv' }
   let(:headers) { ["LastName", "FirstName", "Gender", "FavoriteColor", "DateOfBirth"] }
 
@@ -124,7 +128,7 @@ describe 'Operations' do
       end
   
       it 'should return an Add object with a record' do
-        new_record = Operations::Add.new(record_str: record_1, headers: headers).record
+        new_record = RecordStoreOperations::Add.new(record_str: record_1, headers: headers).record
         expect(new_record.class).to be(Record)
       end
     end
@@ -138,7 +142,7 @@ describe 'Operations' do
     describe '#initialize' do
       let(:record_store) { RecordStore.new(filepath: inventory, headers: headers) }
       let(:records) { record_store.records }
-      let(:export) { Operations::Export.new(filepath: inventory, records: records, headers: headers) }
+      let(:export) { RecordStoreOperations::Export.new(filepath: inventory, records: records, headers: headers) }
       let(:necessary_attrs) { [:filepath, :records, :headers] }      
 
       it 'should return an Export object with attribute necessary for RecordStore#export' do
@@ -149,10 +153,10 @@ describe 'Operations' do
     end
 
     describe '#to_file' do
-      let(:dummy_inventory) { 'spec/dummy-records.csv' }
+      let(:dummy_inventory) { 'db/records.csv' }
       let(:record_store) { RecordStore.new(filepath: dummy_inventory, headers: headers) }
       let(:records) { record_store.records }
-      let(:export) { Operations::Export.new(filepath: 'tmp.csv', records: records, headers: headers) }
+      let(:export) { RecordStoreOperations::Export.new(filepath: 'tmp.csv', records: records, headers: headers) }
 
       after(:each) { File.delete('tmp.csv') if File.exist? 'tmp.csv' }
 
@@ -169,7 +173,7 @@ describe 'Operations' do
   end
 
   describe '::Sort' do
-    let(:dummy_inventory) { 'spec/dummy-records.csv' }
+    let(:dummy_inventory) { 'db/records.csv' }
     let(:record_store) { RecordStore.new(filepath: dummy_inventory, headers: headers) }
     let(:records) { record_store.records }
     let(:indexed_records) { Hash[(1..records.count).to_a.zip(records)] }

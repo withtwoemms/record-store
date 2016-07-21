@@ -1,12 +1,14 @@
 require 'grape'
+
 require_relative 'record_store'
+
 
 module Catalog
   class API < Grape::API
-    version 'v1', using: :header, vendor: 'Funkytown'
+    version 'v1', using: :header, vendor: 'E. Obi'
     format :json
 
-    inventory = File.expand_path('./records.csv')
+    inventory = File.expand_path('db/records.csv')
     headers = ["LastName", "FirstName", "Gender", "FavoriteColor", "DateOfBirth"]
 
     resource :records do
