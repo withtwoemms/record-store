@@ -13,10 +13,28 @@
     <div class="container">
       <div class="content">
 
-        <section id="interface">
-          <form action="http://localhost:8765/records/example" style="padding: 100px 0 100px 0">
-            Search term:<br>
-            <input type="text" name="example">
+        <section id="interface-sort" style="padding: 100px 0; float: left">
+          <form action="http://localhost:8765/records/example">
+            <input type="radio" name="example" value="Gender" checked> Gender<br>
+            <input type="radio" name="example" value="Name"> Name<br>
+            <input type="radio" name="example" value="DateOfBirth"> Birthdate
+            <br><br>
+            <input type="submit" value="Submit"> 
+          </form>  
+        </section>
+
+        <section id="interface-add" style="padding: 100px 0 100px 0; float: right">
+          <form action="http://localhost:8765/records/example">
+            Last Name:<br>
+            <input type="text" name="LastName">
+            <br>First Name:<br>
+            <input type="text" name="FirstName">
+            <br>Gender:<br>
+            <input type="text" name="Gender">
+            <br>Favorite Color:<br>
+            <input type="text" name="FavoriteColor">
+            <br>Birthday:<br>
+            <input type="text" name="DateOfBirth">
             <input type="submit" value="Submit"> 
           </form>
         </section>
