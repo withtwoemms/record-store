@@ -7,7 +7,7 @@ module Catalog
     format :json
 
     inventory = File.expand_path('./records.csv')
-    genres = 'LastName, FirstName, Gender, FavoriteColor, DateOfBirth'
+    headers = ["LastName", "FirstName", "Gender", "FavoriteColor", "DateOfBirth"]
 
     resource :records do
       get :example do
@@ -15,15 +15,21 @@ module Catalog
       end
 
       get :gender do
-        return RecordStore.new(inventory, genres).sort('Gender').buffer
+        record_store = RecordStore.new(filepath: inventory, headers: headers)
+        record_store.sort(by: ['Gender', 'LastName'])
+        return record_store.records
       end
 
       get :birthdate do
-        return RecordStore.new(inventory, genres).sort('DateOfBirth').buffer
+        record_store = RecordStore.new(filepath: inventory, headers: headers)
+        record_store.sort(by: 'DateOfBirth')
+        return record_store.records
       end
 
       get :name do
-        return RecordStore.new(inventory, genres).sort('LastName').buffer
+        record_store = RecordStore.new(filepath: inventory, headers: headers)
+        record_store.sort(by: 'LastName')
+        return record_store.records
       end
     end
   end
