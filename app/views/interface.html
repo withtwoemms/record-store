@@ -3,6 +3,7 @@
   <head>
     <title>E/IO</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" type="text/css" />
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s="   crossorigin="anonymous"></script>
   </head>
   <body>
     <nav class="navbar navbar-default navbar-fixed-top">
@@ -13,14 +14,14 @@
     <div class="container">
       <div class="content">
 
-        <section id="interface-sort" style="padding: 100px 0; float: left">
-          <form action="http://localhost:8765/records/example">
-            <input type="radio" name="example" value="Gender" checked> Gender<br>
-            <input type="radio" name="example" value="Name"> Name<br>
-            <input type="radio" name="example" value="DateOfBirth"> Birthdate
-            <br><br>
-            <input type="submit" value="Submit"> 
-          </form>  
+        <section id="interface-sort" style="padding: 100px 0; float: left; width: 50%">
+          <form>
+            <input type="radio" name="sortBy" value="gender"> Gender<br>
+            <input type="radio" name="sortBy" value="name"> Name<br>
+            <input type="radio" name="sortBy" value="birthdate"> Birthdate
+          </form> 
+          <br>
+          <div id=record-store></div>
         </section>
 
         <section id="interface-add" style="padding: 100px 0 100px 0; float: right">
@@ -47,5 +48,30 @@
         <p class="text-muted">Hand-crafted by me &copy;2016&nbsp; | &nbsp;<em>Radiative Transfer is a thing that happens.</em></p>
       </div>
     </footer>
+
+    <script>
+      $(document).ready(function() {
+        $.ajax({
+          url:      'http://localhost:8765/records',
+          type:     'GET',
+          success:  function(response) {
+            records = JSON.stringify(response)
+            $('#record-store').text(records)
+          }
+        })
+      })
+      $('#interface-sort').on('change', function(e) { 
+        e.preventDefault()
+        endpoint = $('input:checked', '#interface-sort form').attr('value')
+        $.ajax({
+          url:      'http://localhost:8765/records/' + endpoint,
+          type:     'GET',
+          success:  function(response) {
+            records = JSON.stringify(response)
+            $('#record-store').text(records)
+          }
+        })
+      }) 
+    </script>
   </body>
 </html>
