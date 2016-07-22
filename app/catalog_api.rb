@@ -27,10 +27,8 @@ module Catalog
 
       post :add do
         record_store = RecordStore.new(filepath: inventory, headers: headers)
-        #puts params[:add].values.join(',')
-        puts params
-        record_store.add(new_record_str: params.to_hash.values.join(','))
-        puts record_store.records
+        record_store.add(new_record_str: params[:add])
+        record_store.export(filepath: inventory)
         return record_store.records.map(&:content)
       end
 

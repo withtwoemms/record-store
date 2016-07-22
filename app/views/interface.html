@@ -72,6 +72,19 @@
           }
         })
       }) 
+      $('#interface-add').on('submit', function(e) { 
+        e.preventDefault()
+        var new_record_data = $('#interface-add form').serializeArray().map(function(item){return item['value']}).join(',')
+        $.ajax({
+          url:      'http://localhost:8765/records/add',
+          type:     'POST',
+          data:     {add: new_record_data},
+          success:  function(response) {
+            records = JSON.stringify(response)
+            $('#record-store').text(records)
+          }
+        })
+      }) 
     </script>
   </body>
 </html>
