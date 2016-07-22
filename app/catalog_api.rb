@@ -25,6 +25,15 @@ module Catalog
         return {:example => "RECORDS OF THIS GENRE (#{params[:example]}) WILL GO HERE"}
       end
 
+      post :add do
+        record_store = RecordStore.new(filepath: inventory, headers: headers)
+        #puts params[:add].values.join(',')
+        puts params
+        record_store.add(new_record_str: params.to_hash.values.join(','))
+        puts record_store.records
+        return record_store.records.map(&:content)
+      end
+
       get :gender do
         record_store = RecordStore.new(filepath: inventory, headers: headers)
         record_store.sort(by: ['Gender', 'LastName'])

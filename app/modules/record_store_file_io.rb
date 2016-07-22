@@ -1,21 +1,10 @@
+require_relative 'data_structures'
+
+
 module RecordStoreFileIO
-  class Record
-    attr_reader   :content
-
-    def initialize(row:, headers:)
-      @content = Hash[headers.zip(row)]
-    end
-    
-    def to_row
-      return content.values
-    end
-
-    def to_s
-      return content.values.join(',')
-    end
-  end
-
   class RecordAcquirer
+    include DataStructures
+
     def self.fetch_or_create_records_from(filepath:, headers: nil)
       records = []
       @@headers = headers

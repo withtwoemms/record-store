@@ -1,5 +1,9 @@
+require_relative 'data_structures'
+
 module RecordStoreOperations
   class Add
+    include DataStructures
+
     attr_reader :record
 
     def initialize(record_str:, headers:)

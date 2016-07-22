@@ -1,7 +1,7 @@
 require_relative 'spec_helper'
 
 
-Record = RecordStoreFileIO::Record
+Record = DataStructures::Record
 RecordAcquirer = RecordStoreFileIO::RecordAcquirer
 
 describe 'Record' do

@@ -7,6 +7,7 @@ require_relative 'modules/record_store_file_io'
 class RecordStore
   include RecordStoreOperations
   include RecordStoreFileIO
+  include DataStructures
 
   <<-NOTES
     Record Input Formats:
