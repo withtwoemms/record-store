@@ -8,6 +8,10 @@ module Catalog
     version 'v1', using: :header, vendor: 'E. Obi'
     format :json
 
+    before do
+      header "Access-Control-Allow-Origin", "*"
+    end
+
     inventory = File.expand_path('db/records.csv')
     headers = ["LastName", "FirstName", "Gender", "FavoriteColor", "DateOfBirth"]
 
