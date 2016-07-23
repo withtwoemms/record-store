@@ -21,7 +21,9 @@
             <input type="radio" name="sortBy" value="birthdate"> Birthdate
           </form> 
           <br>
-          <div id=record-store></div>
+          <div id=record-store>
+            <ul></ul>
+          </div>
         </section>
 
         <section id="interface-add" style="padding: 100px 0 100px 0; float: right">
@@ -55,8 +57,10 @@
           url:      'http://localhost:8765/records',
           type:     'GET',
           success:  function(response) {
-            records = JSON.stringify(response)
-            $('#record-store').text(records)
+            $('#record-store ul').empty()
+            $.each(response, function(i, item) {
+              $('#record-store ul').append('<li>' + JSON.stringify(item) + '</li>')
+            })
           }
         })
       })
@@ -67,8 +71,10 @@
           url:      'http://localhost:8765/records/' + endpoint,
           type:     'GET',
           success:  function(response) {
-            records = JSON.stringify(response)
-            $('#record-store').text(records)
+            $('#record-store ul').empty()
+            $.each(response, function(i, item) {
+              $('#record-store ul').append('<li>' + JSON.stringify(item) + '</li>')
+            })
           }
         })
       }) 
@@ -80,8 +86,10 @@
           type:     'POST',
           data:     {add: new_record_data},
           success:  function(response) {
-            records = JSON.stringify(response)
-            $('#record-store').text(records)
+            $('#record-store ul').empty()
+            $.each(response, function(i, item) {
+              $('#record-store ul').append('<li>' + JSON.stringify(item) + '</li>')
+            })
           }
         })
       }) 
