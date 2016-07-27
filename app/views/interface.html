@@ -13,8 +13,11 @@
     </nav>
     <div class="container">
       <div class="content">
+        <section id="instructions" style="padding: 100px 0 50px 0; width: 50%">
+          Below, a list will be populated with the Records in the RecordStore. Use the radio button list on the left to order them. Form submissions will be added to the list. For now, until form validation is in place, the form must be filled out in full.
+        </section>
 
-        <section id="interface-sort" style="padding: 100px 0; float: left; width: 50%">
+        <section id="interface-sort" style="float: left; width: 50%">
           <form>
             <input type="radio" name="sortBy" value="gender"> Gender<br>
             <input type="radio" name="sortBy" value="name"> Name<br>
@@ -26,7 +29,7 @@
           </div>
         </section>
 
-        <section id="interface-add" style="padding: 100px 0 100px 0; float: right">
+        <section id="interface-add" style="float: right">
           <form action="http://localhost:8765/records/add" method="POST">
             Last Name:<br>
             <input type="add" name="LastName">
@@ -64,9 +67,9 @@
           }
         })
       })
-      $('#interface-sort').on('change', function(e) { 
+      $('#interface-sort form').on('change', function(e) { 
         e.preventDefault()
-        endpoint = $('input:checked', '#interface-sort form').attr('value')
+        endpoint = $('input:checked', this).attr('value')
         $.ajax({
           url:      'http://localhost:8765/records/' + endpoint,
           type:     'GET',
@@ -78,8 +81,9 @@
           }
         })
       }) 
-      $('#interface-add').on('submit', function(e) { 
+      $('#interface-add form').on('submit', function(e) { 
         e.preventDefault()
+        var that = this
         var new_record_data = $('#interface-add form').serializeArray().map(function(item){return item['value']}).join(',')
         $.ajax({
           url:      'http://localhost:8765/records/add',
@@ -90,6 +94,7 @@
             $.each(response, function(i, item) {
               $('#record-store ul').append('<li>' + JSON.stringify(item) + '</li>')
             })
+            that.reset()
           }
         })
       }) 
